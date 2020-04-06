@@ -5,7 +5,6 @@ from glob import glob
 from pathlib import Path
 import numpy as np
 import rasterio as rio
-from rasterio.enums import Resampling
 import cv2
 
 from quality_metrics import psnr, ssim, fsim, issm
@@ -30,17 +29,6 @@ def get_logger(name, level=logging.DEBUG):
 
 
 logger = get_logger(__name__)
-
-
-def upsample(org_ms_img, org_pans_img, swap_axes=False) -> np.ndarray:
-    data_pan_r = rio.open(org_pans_img)
-    logger.info("Upsampling %s", org_ms_img)
-    with rio.open(org_ms_img) as dataset:
-        data = dataset.read(out_shape=(dataset.count, data_pan_r.height, data_pan_r.width),
-                            resampling=Resampling.cubic)
-    if swap_axes:
-        data = np.rollaxis(data, 0, 3)
-    return data
 
 
 def read_tif(img_path, swap_axes=False):
