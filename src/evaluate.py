@@ -51,8 +51,8 @@ def write_final_dict(metric, metric_dict):
     if not os.path.exists(predict_path):
         os.makedirs(predict_path)
 
-    with open(os.path.join(predict_path, metric + '_' + '.txt'), 'w') as f:
-        f.writelines('{}:{}\n'.format(k, v) for k, v in metric_dict.items())
+    with open(os.path.join(predict_path, metric + '.txt'), 'w') as f:
+        f.writelines('{}\n'.format(v) for _, v in metric_dict.items())
 
 
 def evaluation(org_img_path, pred_img_path, mode, write_to_file):
@@ -75,24 +75,28 @@ def evaluation(org_img_path, pred_img_path, mode, write_to_file):
         logger.info("PSNR value is: %s", psnr_value)
         if write_to_file:
             metric_dict[metric] = {'PSNR': psnr_value}
+            write_final_dict(metric, metric_dict)
 
     if metric == 'ssim':
         ssim_value = ssim(org_img, pred_img)
         logger.info("SSIM value is: %s", ssim_value)
         if write_to_file:
             metric_dict[metric] = {'SSIM': ssim_value}
+            write_final_dict(metric, metric_dict)
 
     if metric == 'fsim':
         fsim_value = fsim(org_img, pred_img)
         logger.info("FSIM value is: %s", fsim_value)
         if write_to_file:
             metric_dict[metric] = {'FSIM': fsim_value}
+            write_final_dict(metric, metric_dict)
 
     if metric == 'issm':
         issm_value = issm(org_img, pred_img)
         logger.info("ISSM value is: %s", issm_value)
         if write_to_file:
             metric_dict[metric] = {'ISSM': issm_value}
+            write_final_dict(metric, metric_dict)
 
 
 if __name__ == "__main__":
