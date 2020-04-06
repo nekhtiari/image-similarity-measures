@@ -1,0 +1,7 @@
+*.DS_Store
+*.idea
+*__pycache__
+metrics_value
+tmp
+*.tif.aux.xml
+*.pyc
