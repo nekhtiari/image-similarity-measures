@@ -60,8 +60,7 @@ def evaluation(org_img_path, pred_img_path, mode, write_to_file):
 
     if mode == "tif":
         logging.info("Reading image %s", Path(org_img_path).stem)
-        #org_img = read_tif(org_img_path, swap_axes=True)
-        org_img = upsample(org_img_path, pred_img_path, swap_axes=True)
+        org_img = read_tif(org_img_path, swap_axes=True)
         logging.info("Reading image %s", Path(pred_img_path).stem)
         pred_img = read_tif(pred_img_path, swap_axes=True)
 
