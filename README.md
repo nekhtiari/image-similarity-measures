@@ -40,7 +40,7 @@ workon similarity-measures
 Install the necessary Python libraries via:
 
 ```bash
-make install
+bash setup.sh
 ```
 
 ## Parameters
@@ -54,4 +54,4 @@ make install
 
 
 ## Evaluation
-For doing the evaluation, you can easily run the following command: `python evaluation.py --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif`
+For doing the evaluation, you can easily run the following command: `python src/evaluate.py --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif`
