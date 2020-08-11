@@ -56,7 +56,7 @@ bash setup.sh
 ## Evaluation
 For doing the evaluation, you can easily run the following command:
 ```bash
-python src/evaluate.py --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif`
+python src/evaluate.py --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif
 ```
 
 ## Citation
