@@ -54,14 +54,16 @@ bash setup.sh
 
 
 ## Evaluation
-For doing the evaluation, you can easily run the following command: `python src/evaluate.py --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif`
-
+For doing the evaluation, you can easily run the following command:
+```bash
+python src/evaluate.py --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif`
+```
 
 ## Citation
 Please use the following for citation purposes of this codebase:
 
 ```
-Müller, M. U., Ekhtiari, N., Almeida, R. M., and Rieke, C.: SUPER-RESOLUTION OF MULTISPECTRAL SATELLITE IMAGES USING
-CONVOLUTIONAL NEURAL NETWORKS, ISPRS Ann. Photogramm. Remote Sens. Spatial Inf. Sci., V-1-2020, 33–40,
-https://doi.org/10.5194/isprs-annals-V-1-2020-33-2020, 2020.
+Müller, M. U., Ekhtiari, N., Almeida, R. M., and Rieke, C.: SUPER-RESOLUTION OF MULTISPECTRAL
+SATELLITE IMAGES USING CONVOLUTIONAL NEURAL NETWORKS, ISPRS Ann. Photogramm. Remote Sens.
+Spatial Inf. Sci., V-1-2020, 33–40, https://doi.org/10.5194/isprs-annals-V-1-2020-33-2020, 2020.
 ```
