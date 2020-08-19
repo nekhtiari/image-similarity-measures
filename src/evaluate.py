@@ -98,13 +98,20 @@ def evaluation(org_img_path, pred_img_path, mode, write_to_file):
             metric_dict[metric] = {'ISSM': issm_value}
             write_final_dict(metric, metric_dict)
 
+    if metric == 'uiq':
+        uiq_value = uiq(org_img, pred_img)
+        logger.info("UIQ value is: %s", uiq_value)
+        if write_to_file:
+            metric_dict[metric] = {'UIQ': uiq_value}
+            write_final_dict(metric, metric_dict)
+
 
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
     parser.add_argument("--org_img_path", type=str, help="Path to original input image")
     parser.add_argument("--pred_img_path", help="Path to predicted images")
-    parser.add_argument("--metric", type=str, default="psnr", help="use psnr, ssim, fsim or issm as evaluation metric")
+    parser.add_argument("--metric", type=str, default="psnr", help="use psnr, ssim, fsim, issm, or uiq as evaluation metric")
     parser.add_argument("--mode", type=str, default="tif", help="format of image, use either tif, or png, or jpg")
     parser.add_argument("--write_to_file", type=bool, default=True, help="final output will be written to a file.")
     args = parser.parse_args()
