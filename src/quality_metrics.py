@@ -160,3 +160,37 @@ def ssim(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
     _assert_image_shapes_equal(org_img, pred_img, "SSIM")
 
     return structural_similarity(org_img, pred_img, data_range=data_range, multichannel=True)
+
+
+def sliding_window(image, stepSize, windowSize):
+    # slide a window across the image
+    for y in range(0, image.shape[0], stepSize):
+        for x in range(0, image.shape[1], stepSize):
+            # yield the current window
+            yield (x, y, image[y:y + windowSize[1], x:x + windowSize[0]])
+
+
+def uiq(org_img: np.ndarray, pred_img: np.ndarray):
+    """
+    Universal Image Quality index
+    """
+    q_all = []
+    for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=1, windowSize=(8, 8)),
+                                                       sliding_window(pred_img, stepSize=1, windowSize=(8, 8))):
+        # if the window does not meet our desired window size, ignore it
+        if window_org.shape[0] != 8 or window_org.shape[1] != 8:
+            continue
+        org_img_mean = np.mean(org_img)
+        pred_img_mean = np.mean(pred_img)
+        org_img_variance = np.var(org_img)
+        pred_img_variance = np.var(pred_img)
+        org_pred_img_variance = np.mean((window_org - org_img_mean) * (window_pred - pred_img_mean))
+
+        numerator = 4 * org_pred_img_variance * org_img_mean * pred_img_mean
+        denominator = (org_img_variance + pred_img_variance) * (org_img_mean**2 + pred_img_mean**2)
+
+        if denominator != 0.0:
+            q = numerator / denominator
+            q_all.append(q)
+
+    return np.mean(q_all)
