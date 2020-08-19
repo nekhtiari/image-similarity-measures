@@ -73,7 +73,7 @@ def fsim(org_img: np.ndarray, pred_img: np.ndarray):
     T2 = 160  # a constant based on the dynamic range GM
     alpha = beta = 1  # parameters used to adjust the relative importance of PC and GM features
     fsim_list = []
-    for i in range(4):
+    for i in range(org_img.shape[2]):
         # Calculate the PC for original and predicted images
         pc1_2dim = pc(org_img[:, :, i], nscale=4, minWaveLength=6, mult=2, sigmaOnf=0.5978)
         pc2_2dim = pc(pred_img[:, :, i], nscale=4, minWaveLength=6, mult=2, sigmaOnf=0.5978)
@@ -174,7 +174,7 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray):
     """
     Universal Image Quality index
     """
-    _assert_image_shapes_equal(org_img, pred_img, "SSIM")
+    _assert_image_shapes_equal(org_img, pred_img, "UIQ")
     q_all = []
     for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=1, windowSize=(8, 8)),
                                                        sliding_window(pred_img, stepSize=1, windowSize=(8, 8))):
@@ -195,3 +195,36 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray):
             q_all.append(q)
 
     return np.mean(q_all)
+
+
+def sam(org_img: np.ndarray, pred_img: np.ndarray):
+    """
+    calculates spectral angle mapper
+    """
+    _assert_image_shapes_equal(org_img, pred_img, "SAM")
+    org_img = org_img.reshape((org_img.shape[0] * org_img.shape[1], org_img.shape[2]))
+    pred_img = pred_img.reshape((pred_img.shape[0] * pred_img.shape[1], pred_img.shape[2]))
+
+    N = org_img.shape[1]
+    sam_angles = np.zeros(N)
+    for i in range(org_img.shape[1]):
+        val = np.clip(np.dot(org_img[:, i], pred_img[:, i]) / (np.linalg.norm(org_img[:, i]) * np.linalg.norm(pred_img[:, i])), -1, 1)
+        sam_angles[i] = np.arccos(val)
+
+    return np.mean(sam_angles)
+
+
+def sre(org_img: np.ndarray, pred_img: np.ndarray):
+    """
+    signal to reconstruction error ratio
+    """
+    _assert_image_shapes_equal(org_img, pred_img, "SRE")
+
+    sre_final = []
+    for i in range(org_img.shape[2]):
+        numerator = (np.mean(org_img[:, :, i]))**2
+        denominator = ((np.linalg.norm(org_img[:, :, i] - pred_img[:, :, i]))**2) /\
+                      (org_img.shape[0] * org_img.shape[1])
+        sre_final.append(10 * np.log10(numerator/denominator))
+
+    return np.mean(sre_final)
