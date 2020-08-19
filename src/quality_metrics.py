@@ -174,6 +174,7 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray):
     """
     Universal Image Quality index
     """
+    _assert_image_shapes_equal(org_img, pred_img, "SSIM")
     q_all = []
     for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=1, windowSize=(8, 8)),
                                                        sliding_window(pred_img, stepSize=1, windowSize=(8, 8))):
