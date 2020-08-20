@@ -58,6 +58,7 @@ For doing the evaluation, you can easily run the following command:
 ```bash
 python src/evaluate.py --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif
 ```
+If you want to save the final result in a file you can add `--write_to_file` at then end of above command.
 
 ## Citation
 Please use the following for citation purposes of this codebase:
