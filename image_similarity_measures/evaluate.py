@@ -1,5 +1,6 @@
 from __future__ import print_function, division
 import os
+import sys
 import argparse
 from glob import glob
 from pathlib import Path
@@ -7,7 +8,7 @@ import numpy as np
 import rasterio as rio
 import cv2
 
-from quality_metrics import psnr, ssim, fsim, issm, uiq, sam, sre
+from image_similarity_measures.quality_metrics import psnr, ssim, fsim, issm, uiq, sam, sre, rmse
 
 import logging
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -53,7 +54,7 @@ def write_final_dict(metric, metric_dict):
 
     with open(os.path.join(predict_path, metric + '.txt'), 'w') as f:
         f.writelines('{}\n'.format(v) for _, v in metric_dict.items())
-        
+
 
 def evaluation(org_img_path, pred_img_path, mode, write_to_file):
     metric_dict = {}
@@ -69,25 +70,27 @@ def evaluation(org_img_path, pred_img_path, mode, write_to_file):
         org_img = read_png(org_img_path)
         logging.info("Reading image %s", Path(pred_img_path).stem)
         pred_img = read_png(pred_img_path)
-    
+
 
     out_value = eval(f"{metric}(org_img, pred_img)")
     logger.info(f"{metric.upper()} value is: {out_value}")
     if write_to_file:
         metric_dict[metric] = {f"{metric.upper()}": out_value}
         write_final_dict(metric, metric_dict)
-        
 
-if __name__ == "__main__":
-
+def main():
     parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
     parser.add_argument("--org_img_path", type=str, help="Path to original input image")
     parser.add_argument("--pred_img_path", help="Path to predicted images")
-    parser.add_argument("--metric", type=str, default="psnr", help="use psnr, ssim, fsim, issm, uiq,"
-                                                                   " sam, or sre as evaluation metric")
+    parser.add_argument("--metric", type=str, default="psnr", help=("use psnr, ssim, fsim, issm, uiq,"
+                                                                   " sam, sre or rmse as evaluation metric"))
     parser.add_argument("--mode", type=str, default="tif", help="format of image, use either tif, or png, or jpg")
     parser.add_argument("--write_to_file", action="store_true", help="final output will be written to a file.")
     args = parser.parse_args()
+
+    if len(sys.argv)==1:
+        parser.print_help()
+        parser.exit()
 
     orgpath = args.org_img_path
     predpath = args.pred_img_path
@@ -97,3 +100,5 @@ if __name__ == "__main__":
 
     evaluation(orgpath, predpath, mode, write_to_file)
 
+if __name__ == "__main__":
+    main()
