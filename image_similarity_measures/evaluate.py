@@ -82,7 +82,8 @@ def main():
     parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
     parser.add_argument("--org_img_path", type=str, help="Path to original input image")
     parser.add_argument("--pred_img_path", help="Path to predicted images")
-    parser.add_argument("--metric", type=str, default="psnr", help="use psnr, ssim, fsim or issm as evaluation metric")
+    parser.add_argument("--metric", type=str, default="psnr", help=("use psnr, ssim, fsim, issm, uiq,"
+                                                                   " sam, sre or rmse as evaluation metric"))
     parser.add_argument("--mode", type=str, default="tif", help="format of image, use either tif, or png, or jpg")
     parser.add_argument("--write_to_file", action="store_true", help="final output will be written to a file.")
     args = parser.parse_args()
