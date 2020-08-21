@@ -7,3 +7,5 @@ tmp
 *.pyc
 *.ipynb_checkpoints
 *.egg*
+build
+dist
