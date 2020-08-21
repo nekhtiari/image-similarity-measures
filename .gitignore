@@ -5,3 +5,4 @@ metrics_value
 tmp
 *.tif.aux.xml
 *.pyc
+*.ipynb_checkpoints
