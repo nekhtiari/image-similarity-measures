@@ -1,4 +1,4 @@
-# Image Similarity measure
+# Image Similarity Measures
 
 Implementation of eight evaluation metrics to access the similarity between two images. The eight metrics are as follows:
 

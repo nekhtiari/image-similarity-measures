@@ -1,4 +1,4 @@
-# Development documentation - Image Similarity measures
+# Development documentation - Image Similarity Measures
 
 ## Installing the required libraries
 
