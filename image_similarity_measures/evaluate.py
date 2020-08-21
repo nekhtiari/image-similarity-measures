@@ -8,7 +8,7 @@ import numpy as np
 import rasterio as rio
 import cv2
 
-from image_similarity_measures.quality_metrics import psnr, ssim, fsim, issm
+from image_similarity_measures.quality_metrics import psnr, ssim, fsim, issm, uiq, sam, sre, rmse
 
 import logging
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
@@ -71,37 +71,14 @@ def evaluation(org_img_path, pred_img_path, mode, write_to_file):
         logging.info("Reading image %s", Path(pred_img_path).stem)
         pred_img = read_png(pred_img_path)
 
-    if metric == 'psnr':
-        psnr_value = psnr(org_img, pred_img)
-        logger.info("PSNR value is: %s", psnr_value)
-        if write_to_file:
-            metric_dict[metric] = {'PSNR': psnr_value}
-            write_final_dict(metric, metric_dict)
 
-    if metric == 'ssim':
-        ssim_value = ssim(org_img, pred_img)
-        logger.info("SSIM value is: %s", ssim_value)
-        if write_to_file:
-            metric_dict[metric] = {'SSIM': ssim_value}
-            write_final_dict(metric, metric_dict)
-
-    if metric == 'fsim':
-        fsim_value = fsim(org_img, pred_img)
-        logger.info("FSIM value is: %s", fsim_value)
-        if write_to_file:
-            metric_dict[metric] = {'FSIM': fsim_value}
-            write_final_dict(metric, metric_dict)
-
-    if metric == 'issm':
-        issm_value = issm(org_img, pred_img)
-        logger.info("ISSM value is: %s", issm_value)
-        if write_to_file:
-            metric_dict[metric] = {'ISSM': issm_value}
-            write_final_dict(metric, metric_dict)
+    out_value = eval(f"{metric}(org_img, pred_img)")
+    logger.info(f"{metric.upper()} value is: {out_value}")
+    if write_to_file:
+        metric_dict[metric] = {f"{metric.upper()}": out_value}
+        write_final_dict(metric, metric_dict)
 
 def main():
-
-
     parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
     parser.add_argument("--org_img_path", type=str, help="Path to original input image")
     parser.add_argument("--pred_img_path", help="Path to predicted images")
