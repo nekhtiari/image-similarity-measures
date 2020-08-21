@@ -39,6 +39,12 @@ imagery-similarity-measures --org_img_path=path_to_first_img --pred_img_path=pat
 ```
 If you want to save the final result in a file you can add `--write_to_file` at then end of above command.
 
+#### Usage in python
+```bash
+import image_similarity_measures
+from image_similarity_measures.quality_metrics import rmse, psnr
+```
+
 ### Install package from source
 
 #### Clone the repository
