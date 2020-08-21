@@ -17,6 +17,20 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
     assert org_img.shape == pred_img.shape, msg
 
 
+def rmse(org_img: np.ndarray, pred_img: np.ndarray):
+    """
+    Root Mean Squared Error
+    """
+
+    _assert_image_shapes_equal(org_img, pred_img, "RMSE")
+    rmse_final = []
+    for i in range(org_img.shape[0]):
+        m = np.mean((org_img[:, :, i].astype(np.float64) - pred_img[:, :, i].astype(np.float64)) ** 2)
+        s = np.sqrt(m)
+        rmse_final.append(s)
+    return np.mean(rmse_final)
+
+
 def psnr(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
     """
     Peek Signal to Noise Ratio, a measure similar to mean squared error.
@@ -30,7 +44,7 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
 
     r = []
     for i in range(org_img.shape[0]):
-        val = 20 * np.log10(data_range) - 10. * np.log10(np.mean(np.square(org_img[i, :, :] - pred_img[i, :, :])))
+        val = 20 * np.log10(data_range) - 10. * np.log10(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
         r.append(val)
 
     return np.mean(r)
