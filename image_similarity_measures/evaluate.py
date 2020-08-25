@@ -56,7 +56,7 @@ def write_final_dict(metric, metric_dict):
         f.writelines('{}\n'.format(v) for _, v in metric_dict.items())
 
 
-def evaluation(org_img_path, pred_img_path, mode, write_to_file):
+def evaluation(org_img_path, pred_img_path, mode, metric, write_to_file):
     metric_dict = {}
 
     if mode == "tif":
@@ -98,7 +98,7 @@ def main():
     mode = args.mode
     write_to_file = args.write_to_file
 
-    evaluation(orgpath, predpath, mode, write_to_file)
+    evaluation(orgpath, predpath, mode, metric, write_to_file)
 
 if __name__ == "__main__":
     main()
