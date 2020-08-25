@@ -35,9 +35,11 @@ pip install image-similarity-measures
 #### Evaluation
 For doing the evaluation, you can easily run the following command:
 ```bash
-imagery-similarity-measures --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif
+image-similarity-measures --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif
 ```
 If you want to save the final result in a file you can add `--write_to_file` at then end of above command.
+
+**Note** that images that are used for evaluation should be **channel last**.
 
 #### Usage in python
 ```bash

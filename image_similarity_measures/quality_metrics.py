@@ -17,7 +17,7 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
     assert org_img.shape == pred_img.shape, msg
 
 
-def rmse(org_img: np.ndarray, pred_img: np.ndarray):
+def rmse(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
     """
     Root Mean Squared Error
     """
@@ -25,7 +25,7 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray):
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
     rmse_final = []
     for i in range(org_img.shape[2]):
-        m = np.mean((org_img[:, :, i] - pred_img[:, :, i]) ** 2)
+        m = np.mean(((org_img[:, :, i] - pred_img[:, :, i]) / data_range) ** 2)
         s = np.sqrt(m)
         rmse_final.append(s)
     return np.mean(rmse_final)
@@ -188,6 +188,7 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray):
     """
     Universal Image Quality index
     """
+    # TODO: Apply optimization, right now it is very slow
     _assert_image_shapes_equal(org_img, pred_img, "UIQ")
     q_all = []
     for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=1, windowSize=(8, 8)),
