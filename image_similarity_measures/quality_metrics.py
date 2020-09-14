@@ -25,7 +25,7 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
     rmse_final = []
     for i in range(org_img.shape[2]):
-        m = np.mean(((org_img[:, :, i] - pred_img[:, :, i]) / data_range) ** 2)
+        m = np.mean(np.square((org_img[:, :, i] - pred_img[:, :, i]) / data_range))
         s = np.sqrt(m)
         rmse_final.append(s)
     return np.mean(rmse_final)
