@@ -226,7 +226,7 @@ def sam(org_img: np.ndarray, pred_img: np.ndarray):
         val = np.clip(np.dot(org_img[:, i], pred_img[:, i]) / (np.linalg.norm(org_img[:, i]) * np.linalg.norm(pred_img[:, i])), -1, 1)
         sam_angles[i] = np.arccos(val)
 
-    return np.mean(sam_angles)
+    return np.mean(sam_angles * 180.0 / np.pi)
 
 
 def sre(org_img: np.ndarray, pred_img: np.ndarray):
