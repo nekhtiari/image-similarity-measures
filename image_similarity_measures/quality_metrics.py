@@ -25,7 +25,7 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
     rmse_final = []
     for i in range(org_img.shape[2]):
-        m = np.mean(((org_img[:, :, i] - pred_img[:, :, i]) / data_range) ** 2)
+        m = np.mean(np.square((org_img[:, :, i] - pred_img[:, :, i]) / data_range))
         s = np.sqrt(m)
         rmse_final.append(s)
     return np.mean(rmse_final)
@@ -226,7 +226,7 @@ def sam(org_img: np.ndarray, pred_img: np.ndarray):
         val = np.clip(np.dot(org_img[:, i], pred_img[:, i]) / (np.linalg.norm(org_img[:, i]) * np.linalg.norm(pred_img[:, i])), -1, 1)
         sam_angles[i] = np.arccos(val)
 
-    return np.mean(sam_angles)
+    return np.mean(sam_angles * 180.0 / np.pi)
 
 
 def sre(org_img: np.ndarray, pred_img: np.ndarray):
@@ -237,7 +237,7 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
 
     sre_final = []
     for i in range(org_img.shape[2]):
-        numerator = (np.mean(org_img[:, :, i]))**2
+        numerator = np.square(np.mean(org_img[:, :, i]))
         denominator = ((np.linalg.norm(org_img[:, :, i] - pred_img[:, :, i]))) /\
                       (org_img.shape[0] * org_img.shape[1])
         sre_final.append(10 * np.log10(numerator/denominator))
