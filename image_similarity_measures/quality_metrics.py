@@ -43,9 +43,11 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095):
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
 
+    np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i]))
+
     r = []
     for i in range(org_img.shape[2]):
-        val = 20 * np.log10(max_p) - 10. * np.log10(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
+        val = 20 * np.log10(max_p) - 10. * np.log10(mse)
         r.append(val)
 
     return np.mean(r)
