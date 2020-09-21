@@ -31,20 +31,21 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
     return np.mean(rmse_final)
 
 
-def psnr(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
+def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095):
     """
-    Peek Signal to Noise Ratio, a measure similar to mean squared error.
+    Peek Signal to Noise Ratio, implemented as mean squared error converted to dB.
 
     It can be calculated as
     PSNR = 20 * log10(MAXp) - 10 * log10(MSE)
 
-    When using 12-bit imagery MaxP is 4096, for 8-bit imagery 256
+    When using 12-bit imagery MaxP is 4096, for 8-bit imagery 256. For floating point imagery using values between
+    0 and 1 (e.g. unscaled reflectance) the first logarithmic term can be dropped as it becomes 0
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
 
     r = []
     for i in range(org_img.shape[2]):
-        val = 20 * np.log10(data_range) - 10. * np.log10(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
+        val = 20 * np.log10(max_p) - 10. * np.log10(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
         r.append(val)
 
     return np.mean(r)
