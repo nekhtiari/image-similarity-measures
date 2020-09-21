@@ -38,7 +38,7 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095):
     It can be calculated as
     PSNR = 20 * log10(MAXp) - 10 * log10(MSE)
 
-    When using 12-bit imagery MaxP is 4096, for 8-bit imagery 256. For floating point imagery using values between
+    When using 12-bit imagery MaxP is 4095, for 8-bit imagery 255. For floating point imagery using values between
     0 and 1 (e.g. unscaled reflectance) the first logarithmic term can be dropped as it becomes 0
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
