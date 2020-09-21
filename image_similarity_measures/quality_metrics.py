@@ -73,7 +73,7 @@ def _gradient_magnitude(img: np.ndarray, img_depth):
     return np.sqrt(scharrx ** 2 + scharry ** 2)
 
 
-def fsim(org_img: np.ndarray, pred_img: np.ndarray):
+def fsim(org_img: np.ndarray, pred_img: np.ndarray) -> float:
     """
     Feature-based similarity index, based on phase congruency (PC) and image gradient magnitude (GM)
 
@@ -148,7 +148,7 @@ def _edge_c(x, y):
     return numerator / denominator
 
 
-def issm(org_img: np.ndarray, pred_img: np.ndarray):
+def issm(org_img: np.ndarray, pred_img: np.ndarray) -> float:
     """
     Information theoretic-based Statistic Similarity Measure
     """
@@ -170,13 +170,13 @@ def issm(org_img: np.ndarray, pred_img: np.ndarray):
     return np.nan_to_num(numerator / denominator)
 
 
-def ssim(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
+def ssim(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     """
     Structural SIMularity index
     """
     _assert_image_shapes_equal(org_img, pred_img, "SSIM")
 
-    return structural_similarity(org_img, pred_img, data_range=data_range, multichannel=True)
+    return structural_similarity(org_img, pred_img, data_range=max_p, multichannel=True)
 
 
 def sliding_window(image, stepSize, windowSize):
