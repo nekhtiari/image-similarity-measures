@@ -47,9 +47,7 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095):
     for i in range(org_img.shape[2]):
         mse_bands.append(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
 
-    val = 20 * np.log10(max_p) - 10. * np.log10(np.mean(mse_bands))
-
-    return val
+    return 20 * np.log10(max_p) - 10. * np.log10(np.mean(mse_bands))
 
 
 def _similarity_measure(x, y, constant):
