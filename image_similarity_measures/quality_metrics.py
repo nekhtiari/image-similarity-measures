@@ -17,21 +17,24 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
     assert org_img.shape == pred_img.shape, msg
 
 
-def rmse(org_img: np.ndarray, pred_img: np.ndarray, data_range=4096):
+def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     """
     Root Mean Squared Error
+
+    Calculated individually for all bands, then averaged
     """
-
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
-    rmse_final = []
+
+    rmse_bands = []
     for i in range(org_img.shape[2]):
-        m = np.mean(np.square((org_img[:, :, i] - pred_img[:, :, i]) / data_range))
+        m = np.mean(np.square((org_img[:, :, i] - pred_img[:, :, i]) / max_p))
         s = np.sqrt(m)
-        rmse_final.append(s)
-    return np.mean(rmse_final)
+        rmse_bands.append(s)
+
+    return np.mean(rmse_bands)
 
 
-def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095):
+def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     """
     Peek Signal to Noise Ratio, implemented as mean squared error converted to dB.
 
