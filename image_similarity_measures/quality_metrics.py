@@ -73,7 +73,7 @@ def _gradient_magnitude(img: np.ndarray, img_depth):
     return np.sqrt(scharrx ** 2 + scharry ** 2)
 
 
-def fsim(org_img: np.ndarray, pred_img: np.ndarray) -> float:
+def fsim(org_img: np.ndarray, pred_img: np.ndarray, T1=0.85, T2=160) -> float:
     """
     Feature-based similarity index, based on phase congruency (PC) and image gradient magnitude (GM)
 
@@ -83,11 +83,22 @@ def fsim(org_img: np.ndarray, pred_img: np.ndarray) -> float:
 
     There are also alternatives to implement GM, the FSIM authors suggest to use the Scharr
     operation which is implemented in OpenCV.
+
+    Note that FSIM is defined in the original papers for grayscale as well as for RGB images. Our use cases
+    are mostly multi-band images e.g. RGB + NIR. To accommodate for this fact, we compute FSIM for each individual
+    band and then take the average.
+
+    Note also that T1 and T2 are constants depending on the dynamic range of PC/GM values. In theory this parameters
+    would benefit from fine-tuning based on the used data, we use the values found in the original paper as defaults.
+
+    Args:
+        org_img -- numpy array containing the original image
+        pred_img -- predicted image
+        T1 -- constant based on the dynamic range of PC values
+        T2 -- constant based on the dynamic range of GM values
     """
     _assert_image_shapes_equal(org_img, pred_img, "FSIM")
 
-    T1 = 0.85  # a constant based on the dynamic range PC
-    T2 = 160  # a constant based on the dynamic range GM
     alpha = beta = 1  # parameters used to adjust the relative importance of PC and GM features
     fsim_list = []
     for i in range(org_img.shape[2]):
