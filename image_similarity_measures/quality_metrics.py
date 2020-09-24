@@ -255,8 +255,8 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
     sre_final = []
     for i in range(org_img.shape[2]):
         numerator = np.square(np.mean(org_img[:, :, i]))
-        denominator = ((np.linalg.norm(org_img[:, :, i] - pred_img[:, :, i]))) /\
+        denominator = (np.linalg.norm(org_img[:, :, i] - pred_img[:, :, i])) /\
                       (org_img.shape[0] * org_img.shape[1])
-        sre_final.append(10 * np.log10(numerator/denominator))
+        sre_final.append(numerator/denominator)
 
-    return np.mean(sre_final)
+    return 10 * np.log10(np.mean(sre_final))
