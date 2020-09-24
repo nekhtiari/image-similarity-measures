@@ -9,7 +9,7 @@ Implementation of eight evaluation metrics to access the similarity between two 
  * <i><a href="https://www.tandfonline.com/doi/full/10.1080/22797254.2019.1628617">Information theoretic-based Statistic Similarity Measure (ISSM)</a></i>,
  * <i><a href="https://www.sciencedirect.com/science/article/abs/pii/S0924271618302636">Signal to reconstruction error ratio (SRE)</a></i>,
  * <i><a href="https://ntrs.nasa.gov/citations/19940012238">Spectral angle mapper (SAM)</a></i>, and
- * <i><a href="https://www.researchgate.net/publication/3342733_A_Universal_Image_Quality_Index">Universal image quality index (UIQ)</a></i>
+ * <i><a href="https://ece.uwaterloo.ca/~z70wang/publications/quality_2c.pdf">Universal image quality index (UIQ)</a></i>
 
 ## Instructions
 
