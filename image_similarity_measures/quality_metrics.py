@@ -229,23 +229,24 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray):
     return np.mean(q_all)
 
 
-def sam(org_img: np.ndarray, pred_img: np.ndarray):
+def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree=True):
     """
-    calculates spectral angle mapper
+    Spectral Angle Mapper which defines the spectral similarity between two spectra
     """
+
     _assert_image_shapes_equal(org_img, pred_img, "SAM")
-    org_img = org_img.reshape((org_img.shape[0] * org_img.shape[1], org_img.shape[2]))
-    pred_img = pred_img.reshape((pred_img.shape[0] * pred_img.shape[1], pred_img.shape[2]))
 
-    N = org_img.shape[1]
-    sam_angles = np.zeros(N)
-    for i in range(org_img.shape[1]):
-        numerator = np.dot(org_img[:, i], pred_img[:, i])
-        denominator = np.linalg.norm(org_img[:, i]) * np.linalg.norm(pred_img[:, i])
-        val = np.clip(numerator / denominator, -1, 1)
-        sam_angles[i] = np.arccos(val)
+    # Spectral angles are first computed for each pair of pixels
+    numerator = np.sum(np.multiply(pred_img, org_img), axis=2)
+    denominator = np.linalg.norm(org_img, axis=2) * np.linalg.norm(pred_img, axis=2)
+    val = np.clip(numerator / denominator, -1, 1)
+    sam_angles = np.arccos(val)
+    if convert_to_degree:
+        sam_angles = sam_angles * 180.0 / np.pi
 
-    return np.mean(sam_angles * 180.0 / np.pi)
+    # The original paper states that SAM values are expressed as radians, while e.g. Lanares
+    # et al. (2018) use degrees. We therefore made this configurable, with degree the default
+    return np.mean(sam_angles)
 
 
 def sre(org_img: np.ndarray, pred_img: np.ndarray):
