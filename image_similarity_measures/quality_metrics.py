@@ -240,7 +240,9 @@ def sam(org_img: np.ndarray, pred_img: np.ndarray):
     N = org_img.shape[1]
     sam_angles = np.zeros(N)
     for i in range(org_img.shape[1]):
-        val = np.clip(np.dot(org_img[:, i], pred_img[:, i]) / (np.linalg.norm(org_img[:, i]) * np.linalg.norm(pred_img[:, i])), -1, 1)
+        numerator = np.dot(org_img[:, i], pred_img[:, i])
+        denominator = np.linalg.norm(org_img[:, i]) * np.linalg.norm(pred_img[:, i])
+        val = np.clip(numerator / denominator, -1, 1)
         sam_angles[i] = np.arccos(val)
 
     return np.mean(sam_angles * 180.0 / np.pi)
