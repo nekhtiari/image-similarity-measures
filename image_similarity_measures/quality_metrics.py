@@ -162,6 +162,9 @@ def _edge_c(x, y):
 def issm(org_img: np.ndarray, pred_img: np.ndarray) -> float:
     """
     Information theoretic-based Statistic Similarity Measure
+
+    Note that the term e which is added to both the numerator as well as the denominator is not properly
+    introduced in the paper. We assume the authers refer to the Euler number.
     """
     _assert_image_shapes_equal(org_img, pred_img, "ISSM")
 
