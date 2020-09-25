@@ -201,15 +201,17 @@ def sliding_window(image, stepSize, windowSize):
             yield (x, y, image[y:y + windowSize[1], x:x + windowSize[0]])
 
 
-def uiq(org_img: np.ndarray, pred_img: np.ndarray):
+def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
     """
     Universal Image Quality index
     """
     # TODO: Apply optimization, right now it is very slow
     _assert_image_shapes_equal(org_img, pred_img, "UIQ")
     q_all = []
-    for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=1, windowSize=(8, 8)),
-                                                       sliding_window(pred_img, stepSize=1, windowSize=(8, 8))):
+    for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=step_size,
+                                                                      windowSize=(window_size, window_size)),
+                                                       sliding_window(pred_img, stepSize=step_size,
+                                                                      windowSize=(window_size, window_size))):
         # if the window does not meet our desired window size, ignore it
         if window_org.shape[0] != 8 or window_org.shape[1] != 8:
             continue
