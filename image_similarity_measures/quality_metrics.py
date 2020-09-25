@@ -213,18 +213,22 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray):
         # if the window does not meet our desired window size, ignore it
         if window_org.shape[0] != 8 or window_org.shape[1] != 8:
             continue
-        org_img_mean = np.mean(org_img)
-        pred_img_mean = np.mean(pred_img)
-        org_img_variance = np.var(org_img)
-        pred_img_variance = np.var(pred_img)
-        org_pred_img_variance = np.mean((window_org - org_img_mean) * (window_pred - pred_img_mean))
 
-        numerator = 4 * org_pred_img_variance * org_img_mean * pred_img_mean
-        denominator = (org_img_variance + pred_img_variance) * (org_img_mean**2 + pred_img_mean**2)
+        for i in range(org_img.shape[2]):
+            org_band = window_org[:, :, i]
+            pred_band = window_pred[:, :, i]
+            org_band_mean = np.mean(org_band)
+            pred_band_mean = np.mean(pred_band)
+            org_band_variance = np.var(org_band)
+            pred_band_variance = np.var(pred_band)
+            org_pred_band_variance = np.mean((org_band - org_band_mean) * (pred_band - pred_band_mean))
 
-        if denominator != 0.0:
-            q = numerator / denominator
-            q_all.append(q)
+            numerator = 4 * org_pred_band_variance * org_band_mean * pred_band_mean
+            denominator = (org_band_variance + pred_band_variance) * (org_band_mean**2 + pred_band_mean**2)
+
+            if denominator != 0.0:
+                q = numerator / denominator
+                q_all.append(q)
 
     return np.mean(q_all)
 
