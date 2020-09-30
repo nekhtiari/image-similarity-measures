@@ -78,6 +78,7 @@ def evaluation(org_img_path, pred_img_path, mode, metric, write_to_file):
         metric_dict[metric] = {f"{metric.upper()}": out_value}
         write_final_dict(metric, metric_dict)
 
+
 def main():
     parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
     parser.add_argument("--org_img_path", type=str, help="Path to original input image")
