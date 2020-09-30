@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="image-similarity-measures",
-    version="0.2.2",
+    version="0.3.0",
     author="UP42",
     author_email="support@up42.com",
     description="Evaluation metrics to assess the similarity between two images.",
