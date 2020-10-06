@@ -213,7 +213,7 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
                                                        sliding_window(pred_img, stepSize=step_size,
                                                                       windowSize=(window_size, window_size))):
         # if the window does not meet our desired window size, ignore it
-        if window_org.shape[0] != 8 or window_org.shape[1] != 8:
+        if window_org.shape[0] != window_size or window_org.shape[1] != window_size:
             continue
 
         for i in range(org_img.shape[2]):
@@ -231,6 +231,10 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
             if denominator != 0.0:
                 q = numerator / denominator
                 q_all.append(q)
+
+    if not np.any(q_all):
+        raise ValueError(f"Window size ({window_size}) is too big for image with shape "
+                         f"{org_img.shape[0:2]}, please use a smaller window size.")
 
     return np.mean(q_all)
 
