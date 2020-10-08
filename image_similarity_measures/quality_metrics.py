@@ -16,6 +16,8 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
 
     assert org_img.shape == pred_img.shape, msg
 
+def _to_float(org_img: np.ndarray, pred_img: np.ndarray):
+    return org_img.astype(np.float32), pred_img.astype(np.float32)
 
 def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     """
@@ -24,6 +26,7 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     Calculated individually for all bands, then averaged
     """
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
+    org_img, pred_img = _to_float(org_img, pred_img)
 
     rmse_bands = []
     for i in range(org_img.shape[2]):
@@ -46,6 +49,7 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     0 and 1 (e.g. unscaled reflectance) the first logarithmic term can be dropped as it becomes 0
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
+    org_img, pred_img = _to_float(org_img, pred_img)
 
     mse_bands = []
     for i in range(org_img.shape[2]):
