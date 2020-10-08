@@ -27,7 +27,8 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
 
     rmse_bands = []
     for i in range(org_img.shape[2]):
-        m = np.mean(np.square(((org_img[:, :, i] - pred_img[:, :, i]) / max_p).astype(org_img.dtype)))
+        dif = np.subtract(org_img, pred_img)
+        m = np.mean(np.square( dif / max_p))
         s = np.sqrt(m)
         rmse_bands.append(s)
 
