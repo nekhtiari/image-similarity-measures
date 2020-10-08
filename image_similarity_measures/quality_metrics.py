@@ -179,7 +179,7 @@ def issm(org_img: np.ndarray, pred_img: np.ndarray) -> float:
     A = 0.3
     B = 0.5
     C = 0.7
-    
+
     ehs_val = _ehs(x, y)
     canny_val = _edge_c(x, y)
 
@@ -212,6 +212,7 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
     """
     # TODO: Apply optimization, right now it is very slow
     _assert_image_shapes_equal(org_img, pred_img, "UIQ")
+    org_img, pred_img = _to_float(org_img, pred_img)
     q_all = []
     for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=step_size,
                                                                       windowSize=(window_size, window_size)),
@@ -269,6 +270,7 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
     signal to reconstruction error ratio
     """
     _assert_image_shapes_equal(org_img, pred_img, "SRE")
+    org_img, pred_img = _to_float(org_img, pred_img)
 
     sre_final = []
     for i in range(org_img.shape[2]):
