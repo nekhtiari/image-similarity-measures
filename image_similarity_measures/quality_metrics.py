@@ -16,9 +16,6 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
 
     assert org_img.shape == pred_img.shape, msg
 
-def _to_float(org_img: np.ndarray, pred_img: np.ndarray):
-    return org_img.astype(np.float32), pred_img.astype(np.float32)
-
 def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     """
     Root Mean Squared Error
@@ -26,7 +23,8 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     Calculated individually for all bands, then averaged
     """
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
-    org_img, pred_img = _to_float(org_img, pred_img)
+
+    org_img = org_img.astype(np.float32)
 
     rmse_bands = []
     for i in range(org_img.shape[2]):
@@ -49,7 +47,8 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     0 and 1 (e.g. unscaled reflectance) the first logarithmic term can be dropped as it becomes 0
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
-    org_img, pred_img = _to_float(org_img, pred_img)
+
+    org_img = org_img.astype(np.float32)
 
     mse_bands = []
     for i in range(org_img.shape[2]):
@@ -212,7 +211,10 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
     """
     # TODO: Apply optimization, right now it is very slow
     _assert_image_shapes_equal(org_img, pred_img, "UIQ")
-    org_img, pred_img = _to_float(org_img, pred_img)
+
+    org_img = org_img.astype(np.float32)
+    pred_img = pred_img.astype(np.float32)
+
     q_all = []
     for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=step_size,
                                                                       windowSize=(window_size, window_size)),
@@ -270,7 +272,8 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
     signal to reconstruction error ratio
     """
     _assert_image_shapes_equal(org_img, pred_img, "SRE")
-    org_img, pred_img = _to_float(org_img, pred_img)
+
+    org_img = org_img.astype(np.float32)
 
     sre_final = []
     for i in range(org_img.shape[2]):
