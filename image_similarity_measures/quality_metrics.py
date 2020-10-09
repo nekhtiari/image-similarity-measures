@@ -16,7 +16,6 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
 
     assert org_img.shape == pred_img.shape, msg
 
-
 def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     """
     Root Mean Squared Error
@@ -25,9 +24,12 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     """
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
 
+    org_img = org_img.astype(np.float32)
+
     rmse_bands = []
     for i in range(org_img.shape[2]):
-        m = np.mean(np.square((org_img[:, :, i] - pred_img[:, :, i]) / max_p))
+        dif = np.subtract(org_img, pred_img)
+        m = np.mean(np.square( dif / max_p))
         s = np.sqrt(m)
         rmse_bands.append(s)
 
@@ -45,6 +47,8 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     0 and 1 (e.g. unscaled reflectance) the first logarithmic term can be dropped as it becomes 0
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
+
+    org_img = org_img.astype(np.float32)
 
     mse_bands = []
     for i in range(org_img.shape[2]):
@@ -174,7 +178,7 @@ def issm(org_img: np.ndarray, pred_img: np.ndarray) -> float:
     A = 0.3
     B = 0.5
     C = 0.7
-    
+
     ehs_val = _ehs(x, y)
     canny_val = _edge_c(x, y)
 
@@ -207,13 +211,17 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
     """
     # TODO: Apply optimization, right now it is very slow
     _assert_image_shapes_equal(org_img, pred_img, "UIQ")
+
+    org_img = org_img.astype(np.float32)
+    pred_img = pred_img.astype(np.float32)
+
     q_all = []
     for (x, y, window_org), (x, y, window_pred) in zip(sliding_window(org_img, stepSize=step_size,
                                                                       windowSize=(window_size, window_size)),
                                                        sliding_window(pred_img, stepSize=step_size,
                                                                       windowSize=(window_size, window_size))):
         # if the window does not meet our desired window size, ignore it
-        if window_org.shape[0] != 8 or window_org.shape[1] != 8:
+        if window_org.shape[0] != window_size or window_org.shape[1] != window_size:
             continue
 
         for i in range(org_img.shape[2]):
@@ -231,6 +239,10 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
             if denominator != 0.0:
                 q = numerator / denominator
                 q_all.append(q)
+
+    if not np.any(q_all):
+        raise ValueError(f"Window size ({window_size}) is too big for image with shape "
+                         f"{org_img.shape[0:2]}, please use a smaller window size.")
 
     return np.mean(q_all)
 
@@ -260,6 +272,8 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
     signal to reconstruction error ratio
     """
     _assert_image_shapes_equal(org_img, pred_img, "SRE")
+
+    org_img = org_img.astype(np.float32)
 
     sre_final = []
     for i in range(org_img.shape[2]):
