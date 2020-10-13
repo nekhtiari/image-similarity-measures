@@ -264,7 +264,7 @@ def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree=True):
 
     # The original paper states that SAM values are expressed as radians, while e.g. Lanares
     # et al. (2018) use degrees. We therefore made this configurable, with degree the default
-    return np.mean(sam_angles)
+    return np.mean(np.nan_to_num(sam_angles))
 
 
 def sre(org_img: np.ndarray, pred_img: np.ndarray):
