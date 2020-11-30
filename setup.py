@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="image-similarity-measures",
-    version="0.3.2",
+    version="0.3.3",
     author="UP42",
     author_email="support@up42.com",
     description="Evaluation metrics to assess the similarity between two images.",
@@ -22,7 +22,7 @@ setuptools.setup(
         "Development Status :: 5 - Production/Stable"
     ],
     install_requires=["numpy", "rasterio", "scikit-image", "opencv-python", "pyfftw", "phasepack"],
-    python_requires=">=3.6, <3.8",
+    python_requires=">=3.6, <3.9",
     entry_points = {
         'console_scripts': ['image-similarity-measures=image_similarity_measures.evaluate:main'],
     }
