@@ -22,7 +22,7 @@ setuptools.setup(
         "Development Status :: 5 - Production/Stable"
     ],
     install_requires=["numpy", "rasterio", "scikit-image", "opencv-python", "pyfftw", "phasepack"],
-    python_requires=">=3.6, <3.9",
+    python_requires=">=3.6, <3.10",
     entry_points = {
         'console_scripts': ['image-similarity-measures=image_similarity_measures.evaluate:main'],
     }

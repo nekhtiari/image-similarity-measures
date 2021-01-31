@@ -15,7 +15,7 @@ Implementation of eight evaluation metrics to access the similarity between two 
 
 The following step-by-step instructions will guide you through installing this package and run evaluation using the command line tool.
 
-**Note:** Supported python versions are 3.6, 3.7, 3.8.
+**Note:** Supported python versions are 3.6, 3.7, 3.8, and 3.9.
 
 ### Install package
 ```bash
