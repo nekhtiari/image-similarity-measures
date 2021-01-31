@@ -1,31 +1,14 @@
-import os
 import argparse
+import logging
+import os
+
+import cv2
 import numpy as np
 import rasterio as rio
-import cv2
 
 from image_similarity_measures.quality_metrics import metric_functions
 
-import logging
-LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-
-
-def get_logger(name, level=logging.DEBUG):
-    """
-    This method creates logger object and sets the default log level to DEBUG.
-    """
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    # create console handler and set level to debug
-    c_h = logging.StreamHandler()
-    c_h.setLevel(level)
-    formatter = logging.Formatter(LOG_FORMAT)
-    c_h.setFormatter(formatter)
-    logger.addHandler(c_h)
-    return logger
-
-
-logger = get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 def write_final_dict(metric, metric_dict):
@@ -59,6 +42,10 @@ def evaluation(org_img_path, pred_img_path, metrics, write_to_file):
 
 
 def main():
+    logging.basicConfig(
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        level=logging.INFO,
+    )
     all_metrics = sorted(metric_functions.keys())
     parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
     parser.add_argument("--org_img_path", help="Path to original input image", required=True, metavar="FILE")
