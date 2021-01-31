@@ -1,9 +1,5 @@
-from __future__ import print_function, division
 import os
-import sys
 import argparse
-from glob import glob
-from pathlib import Path
 import numpy as np
 import rasterio as rio
 import cv2
@@ -32,20 +28,6 @@ def get_logger(name, level=logging.DEBUG):
 logger = get_logger(__name__)
 
 
-def read_tif(img_path, swap_axes=False):
-    if swap_axes:
-        img = rio.open(img_path).read()
-        img = np.rollaxis(img, 0, 3)
-    else:
-        img = rio.open(img_path).read()
-    return img
-
-
-def read_png(img_path):
-    img = cv2.imread(img_path)
-    return img
-
-
 def write_final_dict(metric, metric_dict):
     # Create a directory to save the text file of including evaluation values.
     predict_path = "metrics_value/"
@@ -56,19 +38,16 @@ def write_final_dict(metric, metric_dict):
         f.writelines('{}\n'.format(v) for _, v in metric_dict.items())
 
 
-def evaluation(org_img_path, pred_img_path, mode, metrics, write_to_file):
+def read_image(path):
+    logger.info("Reading image %s", os.path.basename(path))
+    if path.endswith(".tif") or path.endswith(".tiff"):
+        return np.rollaxis(rio.open(path).read(), 0, 3)
+    return cv2.imread(path)
 
-    if mode == "tif":
-        logging.info("Reading image %s", Path(org_img_path).stem)
-        org_img = read_tif(org_img_path, swap_axes=True)
-        logging.info("Reading image %s", Path(pred_img_path).stem)
-        pred_img = read_tif(pred_img_path, swap_axes=True)
 
-    if mode == "png":
-        logging.info("Reading image %s", Path(org_img_path).stem)
-        org_img = read_png(org_img_path)
-        logging.info("Reading image %s", Path(pred_img_path).stem)
-        pred_img = read_png(pred_img_path)
+def evaluation(org_img_path, pred_img_path, metrics, write_to_file):
+    org_img = read_image(org_img_path)
+    pred_img = read_image(pred_img_path)
 
     for metric in metrics:
         metric_func = metric_functions[metric]
@@ -87,7 +66,6 @@ def main():
     parser.add_argument("--metric", dest="metrics", action="append",
                         choices=all_metrics + ['all'], metavar="METRIC",
                         help="select an evaluation metric (%(choices)s) (can be repeated)")
-    parser.add_argument("--mode",  default="tif", help="format of image, use either tif, or png, or jpg")
     parser.add_argument("--write_to_file", action="store_true", help="final output will be written to a file.")
     args = parser.parse_args()
     if not args.metrics:
@@ -99,7 +77,6 @@ def main():
         org_img_path=args.org_img_path,
         pred_img_path=args.pred_img_path,
         metrics=args.metrics,
-        mode=args.mode,
         write_to_file=args.write_to_file,
     )
 

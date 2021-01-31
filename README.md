@@ -29,15 +29,14 @@ pip install image-similarity-measures
   --pred_img_path FILE  Path to predicted image
   --metric METRIC       select an evaluation metric (fsim, issm, psnr, rmse,
                         sam, sre, ssim, uiq, all) (can be repeated)
-  --mode MODE           format of image, use either tif, or png, or jpg
   --write_to_file       final output will be written to a file.
-
 ```
 
 #### Evaluation
 For doing the evaluation, you can easily run the following command:
+
 ```bash
-image-similarity-measures --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif
+image-similarity-measures --org_img_path=a.tif --pred_img_path=b.tif
 ```
 If you want to save the final result in a file you can add `--write_to_file` at then end of above command.
 
