@@ -81,25 +81,21 @@ def evaluation(org_img_path, pred_img_path, mode, metric, write_to_file):
 
 def main():
     parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
-    parser.add_argument("--org_img_path", type=str, help="Path to original input image")
-    parser.add_argument("--pred_img_path", help="Path to predicted images")
-    parser.add_argument("--metric", type=str, default="psnr", help=("use psnr, ssim, fsim, issm, uiq,"
+    parser.add_argument("--org_img_path", help="Path to original input image", required=True, metavar="FILE")
+    parser.add_argument("--pred_img_path", help="Path to predicted image", required=True, metavar="FILE")
+    parser.add_argument("--metric", default="psnr", help=("use psnr, ssim, fsim, issm, uiq,"
                                                                    " sam, sre or rmse as evaluation metric"))
-    parser.add_argument("--mode", type=str, default="tif", help="format of image, use either tif, or png, or jpg")
+    parser.add_argument("--mode", default="tif", help="format of image, use either tif, or png, or jpg")
     parser.add_argument("--write_to_file", action="store_true", help="final output will be written to a file.")
     args = parser.parse_args()
 
-    if len(sys.argv)==1:
-        parser.print_help()
-        parser.exit()
-
-    orgpath = args.org_img_path
-    predpath = args.pred_img_path
-    metric = args.metric
-    mode = args.mode
-    write_to_file = args.write_to_file
-
-    evaluation(orgpath, predpath, mode, metric, write_to_file)
+    evaluation(
+        org_img_path=args.org_img_path,
+        pred_img_path=args.pred_img_path,
+        metric=args.metric,
+        mode=args.mode,
+        write_to_file=args.write_to_file,
+    )
 
 if __name__ == "__main__":
     main()
