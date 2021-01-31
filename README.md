@@ -27,10 +27,11 @@ pip install image-similarity-measures
 ```
   --org_img_path FILE   Path to original input image
   --pred_img_path FILE  Path to predicted image
-  --metric METRIC       use psnr, ssim, fsim, issm, uiq, sam, sre or rmse as
-                        evaluation metric
+  --metric METRIC       select an evaluation metric (fsim, issm, psnr, rmse,
+                        sam, sre, ssim, uiq, all) (can be repeated)
   --mode MODE           format of image, use either tif, or png, or jpg
   --write_to_file       final output will be written to a file.
+
 ```
 
 #### Evaluation
