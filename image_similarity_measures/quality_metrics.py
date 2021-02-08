@@ -283,3 +283,14 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
         sre_final.append(numerator/denominator)
 
     return 10 * np.log10(np.mean(sre_final))
+
+metric_functions = {
+    "fsim": fsim,
+    "issm": issm,
+    "psnr": psnr,
+    "rmse": rmse,
+    "sam": sam,
+    "sre": sre,
+    "ssim": ssim,
+    "uiq": uiq,
+}

@@ -25,19 +25,19 @@ pip install image-similarity-measures
 ### Usage
 #### Parameters
 ```
---org_img_path : Path to the original image.
---pred_img_path : Path to the predicted or disordered image which is created from the original image.
---metric= : Name of the evaluation metric. Default set to be psnr. It can be one of the following: psnr, ssim, issm, fsim.
---mode : Image format. Default set to be "tif". can be one of the following: "tif", or "png", or "jpg".
---write_to_file : The final result will be written to a file. Set to False if you don't want a final file.
+  --org_img_path FILE   Path to original input image
+  --pred_img_path FILE  Path to predicted image
+  --metric METRIC       select an evaluation metric (fsim, issm, psnr, rmse,
+                        sam, sre, ssim, uiq, all) (can be repeated)
 ```
 
 #### Evaluation
 For doing the evaluation, you can easily run the following command:
+
 ```bash
-image-similarity-measures --org_img_path=path_to_first_img --pred_img_path=path_to_second_img --mode=tif
+image-similarity-measures --org_img_path=a.tif --pred_img_path=b.tif
 ```
-If you want to save the final result in a file you can add `--write_to_file` at then end of above command.
+The results are printed in machine-readable JSON, so you can redirect the output of the command into a file.
 
 **Note** that images that are used for evaluation should be **channel last**.
 
