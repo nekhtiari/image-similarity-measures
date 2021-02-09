@@ -29,7 +29,7 @@ jobs:
     - name: Install app
       run: python -m pip install --ignore-requires-python -e .
     - name: Run app with coverage
-      run: coverage run -m image_similarity_measures.evaluate --org_img_path=example/lafayette_org.tif --pred_img_path=example/lafayette_pred.tif
+      run: coverage run -m image_similarity_measures.evaluate --metric all --org_img_path=example/lafayette_org.tif --pred_img_path=example/lafayette_pred.tif
     - name: Report coverage
       continue-on-error: true
       run: coverage report
