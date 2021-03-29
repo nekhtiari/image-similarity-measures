@@ -18,11 +18,29 @@ The following step-by-step instructions will guide you through installing this p
 **Note:** Supported python versions are 3.6, 3.7, 3.8, and 3.9.
 
 ### Install package
+
 ```bash
 pip install image-similarity-measures
 ```
 
+For faster evaluation of the FSIM metric, the `pyfftw` package is required.
+You can install it separately, or via the `speedups` extra:
+
+```bash
+pip install image-similarity-measures[speedups]
+```
+
+You may also install the `rasterio` package to allow the CLI tool to use it for reading TIFF
+images instead of OpenCV. It, too, is available as an extra:
+
+
+```bash
+pip install image-similarity-measures[rasterio]
+```
+
+
 ### Usage
+
 #### Parameters
 ```
   --org_img_path FILE   Path to original input image

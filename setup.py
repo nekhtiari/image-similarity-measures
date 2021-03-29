@@ -21,9 +21,13 @@ setuptools.setup(
         "Intended Audience :: Science/Research",
         "Development Status :: 5 - Production/Stable"
     ],
-    install_requires=["numpy", "rasterio", "scikit-image", "opencv-python", "pyfftw", "phasepack"],
+    extras_require={
+        "rasterio": ["rasterio"],
+        "speedups": ["pyfftw"],
+    },
+    install_requires=["numpy", "scikit-image", "opencv-python", "phasepack"],
     python_requires=">=3.6, <3.10",
     entry_points = {
         'console_scripts': ['image-similarity-measures=image_similarity_measures.evaluate:main'],
-    }
+    },
 )

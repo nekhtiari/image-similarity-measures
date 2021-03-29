@@ -5,7 +5,11 @@ import os
 
 import cv2
 import numpy as np
-import rasterio as rio
+
+try:
+    import rasterio
+except ImportError:
+    rasterio = None
 
 from image_similarity_measures.quality_metrics import metric_functions
 
@@ -14,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 def read_image(path):
     logger.info("Reading image %s", os.path.basename(path))
-    if path.endswith(".tif") or path.endswith(".tiff"):
-        return np.rollaxis(rio.open(path).read(), 0, 3)
+    if rasterio and (path.endswith(".tif") or path.endswith(".tiff")):
+        return np.rollaxis(rasterio.open(path).read(), 0, 3)
     return cv2.imread(path)
 
 
