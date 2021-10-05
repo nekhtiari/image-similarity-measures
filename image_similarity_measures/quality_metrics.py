@@ -25,7 +25,11 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
 
     org_img = org_img.astype(np.float32)
-
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
+    
     rmse_bands = []
     for i in range(org_img.shape[2]):
         dif = np.subtract(org_img, pred_img)
@@ -49,6 +53,10 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
 
     org_img = org_img.astype(np.float32)
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
 
     mse_bands = []
     for i in range(org_img.shape[2]):
@@ -102,6 +110,10 @@ def fsim(org_img: np.ndarray, pred_img: np.ndarray, T1=0.85, T2=160) -> float:
         T2 -- constant based on the dynamic range of GM values
     """
     _assert_image_shapes_equal(org_img, pred_img, "FSIM")
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
 
     alpha = beta = 1  # parameters used to adjust the relative importance of PC and GM features
     fsim_list = []
@@ -223,6 +235,10 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
         # if the window does not meet our desired window size, ignore it
         if window_org.shape[0] != window_size or window_org.shape[1] != window_size:
             continue
+        
+        # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+        if org_img.ndim == 2:
+            org_img = np.expand_dims(org_img, axis=-1)
 
         for i in range(org_img.shape[2]):
             org_band = window_org[:, :, i]
@@ -274,6 +290,10 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
     _assert_image_shapes_equal(org_img, pred_img, "SRE")
 
     org_img = org_img.astype(np.float32)
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
 
     sre_final = []
     for i in range(org_img.shape[2]):
