@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import os
+from typing import List
 
 import cv2
 import numpy as np
@@ -16,14 +17,14 @@ from image_similarity_measures.quality_metrics import metric_functions
 logger = logging.getLogger(__name__)
 
 
-def read_image(path):
-    logger.info("Reading image %s", os.path.basename(path))
+def read_image(path: str):
+    logger.info(f"Reading image {os.path.basename(path)}")
     if rasterio and (path.endswith(".tif") or path.endswith(".tiff")):
         return np.rollaxis(rasterio.open(path).read(), 0, 3)
     return cv2.imread(path)
 
 
-def evaluation(org_img_path, pred_img_path, metrics):
+def evaluation(org_img_path: str, pred_img_path: str, metrics: List[str]):
     output_dict = {}
     org_img = read_image(org_img_path)
     pred_img = read_image(pred_img_path)
