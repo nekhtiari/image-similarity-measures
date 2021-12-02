@@ -1,7 +1,8 @@
 """
 This module is a collection of metrics to assess the similarity between two images.
-PSNR, SSIM, FSIM and ISSM are the current metrics that are implemented in this module.
+Currently implemented metrics are FSIM, ISSM, PSNR, RMSE, SAM, SRE, SSIM, UIQ.
 """
+
 import math
 
 import numpy as np
@@ -293,7 +294,7 @@ def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree: bool = Tru
 
 def sre(org_img: np.ndarray, pred_img: np.ndarray):
     """
-    signal to reconstruction error ratio
+    Signal to Reconstruction Error Ratio
     """
     _assert_image_shapes_equal(org_img, pred_img, "SRE")
 
