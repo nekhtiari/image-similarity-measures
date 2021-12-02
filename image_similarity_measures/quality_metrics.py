@@ -19,7 +19,7 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
     assert org_img.shape == pred_img.shape, msg
 
 
-def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
+def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
     Root Mean Squared Error
 
@@ -39,7 +39,7 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     return np.mean(rmse_bands)
 
 
-def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
+def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
     Peek Signal to Noise Ratio, implemented as mean squared error converted to dB.
 
@@ -60,7 +60,7 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
     return 20 * np.log10(max_p) - 10.0 * np.log10(np.mean(mse_bands))
 
 
-def _similarity_measure(x, y, constant):
+def _similarity_measure(x: np.array, y: np.array, constant: float):
     """
     Calculate feature similarity measurement between two images
     """
@@ -70,9 +70,9 @@ def _similarity_measure(x, y, constant):
     return numerator / denominator
 
 
-def _gradient_magnitude(img: np.ndarray, img_depth):
+def _gradient_magnitude(img: np.ndarray, img_depth: int):
     """
-    Calculate gradient magnitude based on Scharr operator
+    Calculate gradient magnitude based on Scharr operator.
     """
     scharrx = cv2.Scharr(img, img_depth, 1, 0)
     scharry = cv2.Scharr(img, img_depth, 0, 1)
@@ -80,7 +80,9 @@ def _gradient_magnitude(img: np.ndarray, img_depth):
     return np.sqrt(scharrx ** 2 + scharry ** 2)
 
 
-def fsim(org_img: np.ndarray, pred_img: np.ndarray, T1=0.85, T2=160) -> float:
+def fsim(
+    org_img: np.ndarray, pred_img: np.ndarray, T1: float = 0.85, T2: float = 160
+) -> float:
     """
     Feature-based similarity index, based on phase congruency (PC) and image gradient magnitude (GM)
 
@@ -148,7 +150,7 @@ def fsim(org_img: np.ndarray, pred_img: np.ndarray, T1=0.85, T2=160) -> float:
     return np.mean(fsim_list)
 
 
-def _ehs(x, y):
+def _ehs(x: np.ndarray, y: np.ndarray):
     """
     Entropy-Histogram Similarity measure
     """
@@ -157,7 +159,7 @@ def _ehs(x, y):
     return -np.sum(np.nan_to_num(H * np.log2(H)))
 
 
-def _edge_c(x, y):
+def _edge_c(x: np.ndarray, y: np.ndarray):
     """
     Edge correlation coefficient based on Canny detector
     """
@@ -199,16 +201,16 @@ def issm(org_img: np.ndarray, pred_img: np.ndarray) -> float:
     return np.nan_to_num(numerator / denominator)
 
 
-def ssim(org_img: np.ndarray, pred_img: np.ndarray, max_p=4095) -> float:
+def ssim(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
-    Structural SIMularity index
+    Structural Simularity Index
     """
     _assert_image_shapes_equal(org_img, pred_img, "SSIM")
 
     return structural_similarity(org_img, pred_img, data_range=max_p, multichannel=True)
 
 
-def sliding_window(image, stepSize, windowSize):
+def sliding_window(image: np.ndarray, stepSize: int, windowSize: int):
     # slide a window across the image
     for y in range(0, image.shape[0], stepSize):
         for x in range(0, image.shape[1], stepSize):
@@ -216,7 +218,9 @@ def sliding_window(image, stepSize, windowSize):
             yield (x, y, image[y : y + windowSize[1], x : x + windowSize[0]])
 
 
-def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
+def uiq(
+    org_img: np.ndarray, pred_img: np.ndarray, step_size: int = 1, window_size: int = 8
+):
     """
     Universal Image Quality index
     """
@@ -268,11 +272,10 @@ def uiq(org_img: np.ndarray, pred_img: np.ndarray, step_size=1, window_size=8):
     return np.mean(q_all)
 
 
-def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree=True):
+def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree: bool = True):
     """
     Spectral Angle Mapper which defines the spectral similarity between two spectra
     """
-
     _assert_image_shapes_equal(org_img, pred_img, "SAM")
 
     # Spectral angles are first computed for each pair of pixels
