@@ -42,12 +42,26 @@ def main():
         level=logging.INFO,
     )
     all_metrics = sorted(metric_functions.keys())
-    parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
-    parser.add_argument("--org_img_path", help="Path to original input image", required=True, metavar="FILE")
-    parser.add_argument("--pred_img_path", help="Path to predicted image", required=True, metavar="FILE")
-    parser.add_argument("--metric", dest="metrics", action="append",
-                        choices=all_metrics + ['all'], metavar="METRIC",
-                        help="select an evaluation metric (%(choices)s) (can be repeated)")
+    parser = argparse.ArgumentParser(
+        description="Evaluates an Image Super Resolution Model"
+    )
+    parser.add_argument(
+        "--org_img_path",
+        help="Path to original input image",
+        required=True,
+        metavar="FILE",
+    )
+    parser.add_argument(
+        "--pred_img_path", help="Path to predicted image", required=True, metavar="FILE"
+    )
+    parser.add_argument(
+        "--metric",
+        dest="metrics",
+        action="append",
+        choices=all_metrics + ["all"],
+        metavar="METRIC",
+        help="select an evaluation metric (%(choices)s) (can be repeated)",
+    )
     args = parser.parse_args()
     if not args.metrics:
         args.metrics = ["psnr"]
@@ -59,7 +73,11 @@ def main():
         pred_img_path=args.pred_img_path,
         metrics=args.metrics,
     )
-    result_dict = {"image1": args.org_img_path, "image2": args.pred_img_path, "metrics": metric_values}
+    result_dict = {
+        "image1": args.org_img_path,
+        "image2": args.pred_img_path,
+        "metrics": metric_values,
+    }
     print(json.dumps(result_dict, sort_keys=True))
 
 
