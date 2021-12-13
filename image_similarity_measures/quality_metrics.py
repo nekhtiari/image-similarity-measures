@@ -28,11 +28,9 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
 
-    org_img = org_img.astype(np.float32)
-
     rmse_bands = []
     for i in range(org_img.shape[2]):
-        dif = np.subtract(org_img, pred_img)
+        dif = np.subtract(org_img[:, :, i], pred_img[:, :, i])
         m = np.mean(np.square(dif / max_p))
         s = np.sqrt(m)
         rmse_bands.append(s)
@@ -51,8 +49,6 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     0 and 1 (e.g. unscaled reflectance) the first logarithmic term can be dropped as it becomes 0
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
-
-    org_img = org_img.astype(np.float32)
 
     mse_bands = []
     for i in range(org_img.shape[2]):
