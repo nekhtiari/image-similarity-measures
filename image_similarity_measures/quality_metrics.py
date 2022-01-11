@@ -12,6 +12,10 @@ import cv2
 
 
 def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric: str):
+    # shape of the image should be like this (rows, cols, bands)
+    # Please note that: The interpretation of a 3-dimension array read from rasterio is: (bands, rows, columns) while
+    # image processing software like scikit-image, pillow and matplotlib are generally ordered: (rows, columns, bands)
+    # in order efficiently swap the axis order one can use reshape_as_raster, reshape_as_image from rasterio.plot
     msg = (
         f"Cannot calculate {metric}. Input shapes not identical. y_true shape ="
         f"{str(org_img.shape)}, y_pred shape = {str(pred_img.shape)}"
@@ -28,11 +32,9 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
 
-    org_img = org_img.astype(np.float32)
-
     rmse_bands = []
     for i in range(org_img.shape[2]):
-        dif = np.subtract(org_img, pred_img)
+        dif = np.subtract(org_img[:, :, i], pred_img[:, :, i])
         m = np.mean(np.square(dif / max_p))
         s = np.sqrt(m)
         rmse_bands.append(s)
@@ -51,8 +53,6 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     0 and 1 (e.g. unscaled reflectance) the first logarithmic term can be dropped as it becomes 0
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
-
-    org_img = org_img.astype(np.float32)
 
     mse_bands = []
     for i in range(org_img.shape[2]):
