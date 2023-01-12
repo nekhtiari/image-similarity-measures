@@ -2,6 +2,7 @@ import argparse
 import json
 import logging
 import os
+from typing import List
 
 import cv2
 import numpy as np
@@ -16,14 +17,14 @@ from image_similarity_measures.quality_metrics import metric_functions
 logger = logging.getLogger(__name__)
 
 
-def read_image(path):
-    logger.info("Reading image %s", os.path.basename(path))
+def read_image(path: str):
+    logger.info(f"Reading image {os.path.basename(path)}")
     if rasterio and (path.endswith(".tif") or path.endswith(".tiff")):
         return np.rollaxis(rasterio.open(path).read(), 0, 3)
     return cv2.imread(path)
 
 
-def evaluation(org_img_path, pred_img_path, metrics):
+def evaluation(org_img_path: str, pred_img_path: str, metrics: List[str]):
     output_dict = {}
     org_img = read_image(org_img_path)
     pred_img = read_image(pred_img_path)
@@ -42,12 +43,26 @@ def main():
         level=logging.INFO,
     )
     all_metrics = sorted(metric_functions.keys())
-    parser = argparse.ArgumentParser(description="Evaluates an Image Super Resolution Model")
-    parser.add_argument("--org_img_path", help="Path to original input image", required=True, metavar="FILE")
-    parser.add_argument("--pred_img_path", help="Path to predicted image", required=True, metavar="FILE")
-    parser.add_argument("--metric", dest="metrics", action="append",
-                        choices=all_metrics + ['all'], metavar="METRIC",
-                        help="select an evaluation metric (%(choices)s) (can be repeated)")
+    parser = argparse.ArgumentParser(
+        description="Evaluates an Image Super Resolution Model"
+    )
+    parser.add_argument(
+        "--org_img_path",
+        help="Path to original input image",
+        required=True,
+        metavar="FILE",
+    )
+    parser.add_argument(
+        "--pred_img_path", help="Path to predicted image", required=True, metavar="FILE"
+    )
+    parser.add_argument(
+        "--metric",
+        dest="metrics",
+        action="append",
+        choices=all_metrics + ["all"],
+        metavar="METRIC",
+        help="select an evaluation metric (%(choices)s) (can be repeated)",
+    )
     args = parser.parse_args()
     if not args.metrics:
         args.metrics = ["psnr"]
@@ -59,7 +74,11 @@ def main():
         pred_img_path=args.pred_img_path,
         metrics=args.metrics,
     )
-    result_dict = {"image1": args.org_img_path, "image2": args.pred_img_path, "metrics": metric_values}
+    result_dict = {
+        "image1": args.org_img_path,
+        "image2": args.pred_img_path,
+        "metrics": metric_values,
+    }
     print(json.dumps(result_dict, sort_keys=True))
 
 
