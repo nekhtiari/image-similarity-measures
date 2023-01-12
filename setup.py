@@ -1,18 +1,18 @@
-import setuptools
+from pathlib import Path
+from setuptools import setup, find_packages
 
-with open("README.md", "r") as fh:
-    long_description = fh.read()
+parent_dir = Path(__file__).resolve().parent
 
-setuptools.setup(
+setup(
     name="image-similarity-measures",
     version="0.3.5",
     author="UP42",
     author_email="support@up42.com",
     description="Evaluation metrics to assess the similarity between two images.",
-    long_description=long_description,
+    long_description=parent_dir.joinpath("README.md").read_text(),
     long_description_content_type="text/markdown",
     url="https://github.com/up42/image-similarity-measures",
-    packages=setuptools.find_packages(),
+    packages=find_packages(),
     license="MIT",
     classifiers=[
         "Programming Language :: Python :: 3",
