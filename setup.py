@@ -25,7 +25,7 @@ setuptools.setup(
         "rasterio": ["rasterio"],
         "speedups": ["pyfftw"],
     },
-    install_requires=["numpy", "scikit-image", "opencv-python", "phasepack"],
+    install_requires=parent_dir.joinpath("requirements.txt").read_text().splitlines(),
     python_requires=">=3.6",
     entry_points={
         "console_scripts": [
