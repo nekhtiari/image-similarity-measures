@@ -1,24 +1,28 @@
-# Development documentation - Image Similarity Measures
+# Developer documentation - Image Similarity Measures
 
-## Installing the required libraries
+The development installation is necessary if you want to contribute to the image-similarity-measures package, e.g. to 
+fix a bug.
 
-Follow instructions in [main README](README.md) to setup your virtual environment.
+Clone the repository and install the library in editable/system-link mode. We recommend using a virtual environment.
 
-## Install package locally using system link
 ```bash
+git clone https://github.com/up42/image-similarity-measures.git
+cd image-similarity-measures
 pip install -e .
 ```
 
-## Install `twine`
+## Upload new package version to PyPI
+
 ```bash
 pip install twine
 ```
 
-## Upgrading package in `pypi`
+Install the [twine package](https://pypi.org/project/twine/) and set the `TWINE_USERNAME` and `TWINE_PASSWORD` 
+environment variables with your PyPI credentials.
 
-Set appropriate `PYPI_USER` and `PYPI_PASSWORD` in your environment.
 ```bash
-python3 setup.py sdist bdist_wheel
-python3 -m twine check dist/*
-python3 -m twine upload -u $(PYPI_USER) -p $(PYPI_PASSWORD) dist/*
+python setup.py sdist bdist_wheel
+twine check dist/*
+twine upload dist/*
 ```
+
