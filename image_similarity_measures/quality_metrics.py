@@ -66,7 +66,7 @@ def _similarity_measure(x: np.array, y: np.array, constant: float):
     Calculate feature similarity measurement between two images
     """
     numerator = 2 * x * y + constant
-    denominator = x ** 2 + y ** 2 + constant
+    denominator = x**2 + y**2 + constant
 
     return numerator / denominator
 
@@ -78,7 +78,7 @@ def _gradient_magnitude(img: np.ndarray, img_depth: int):
     scharrx = cv2.Scharr(img, img_depth, 1, 0)
     scharry = cv2.Scharr(img, img_depth, 0, 1)
 
-    return np.sqrt(scharrx ** 2 + scharry ** 2)
+    return np.sqrt(scharrx**2 + scharry**2)
 
 
 def fsim(
@@ -142,7 +142,7 @@ def fsim(
         # Calculate similarity measure for GM1 and GM2
         S_g = _similarity_measure(gm1, gm2, T2)
 
-        S_l = (S_pc ** alpha) * (S_g ** beta)
+        S_l = (S_pc**alpha) * (S_g**beta)
 
         numerator = np.sum(S_l * np.maximum(pc1_2dim_sum, pc2_2dim_sum))
         denominator = np.sum(np.maximum(pc1_2dim_sum, pc2_2dim_sum))
@@ -257,7 +257,7 @@ def uiq(
 
             numerator = 4 * org_pred_band_variance * org_band_mean * pred_band_mean
             denominator = (org_band_variance + pred_band_variance) * (
-                org_band_mean ** 2 + pred_band_mean ** 2
+                org_band_mean**2 + pred_band_mean**2
             )
 
             if denominator != 0.0:
