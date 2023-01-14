@@ -55,6 +55,7 @@ machine-readable JSON, so you can redirect the output of the command into a file
 
 ```bash
 from image_similarity_measures.evaluate import evaluation
+
 evaluation(org_img_path="example/lafayette_org.tif", 
            pred_img_path="example/lafayette_pred.tif", 
            metrics=["rmse", "psnr"])
@@ -62,6 +63,7 @@ evaluation(org_img_path="example/lafayette_org.tif",
 
 ```bash
 from image_similarity_measures.quality_metrics import rmse
+
 rmse(org_img=np.random.rand(3,2,1), pred_img=np.random.rand(3,2,1))
 ```
 
