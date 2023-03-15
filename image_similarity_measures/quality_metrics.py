@@ -224,7 +224,7 @@ def ssim(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
     _assert_image_shapes_equal(org_img, pred_img, "SSIM")
 
-    return structural_similarity(org_img, pred_img, data_range=max_p, multichannel=True)
+    return structural_similarity(org_img, pred_img, data_range=max_p, channel_axis=2)
 
 
 def sliding_window(image: np.ndarray, stepSize: int, windowSize: int):
