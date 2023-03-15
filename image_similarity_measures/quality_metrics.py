@@ -32,6 +32,12 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
 
+    org_img = org_img.astype(np.float32)
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
+    
     rmse_bands = []
     for i in range(org_img.shape[2]):
         dif = np.subtract(org_img[:, :, i], pred_img[:, :, i])
@@ -54,6 +60,12 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     """
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
 
+    org_img = org_img.astype(np.float32)
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
+        
     mse_bands = []
     for i in range(org_img.shape[2]):
         mse_bands.append(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
@@ -108,6 +120,10 @@ def fsim(
         T2 -- constant based on the dynamic range of GM values
     """
     _assert_image_shapes_equal(org_img, pred_img, "FSIM")
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
 
     alpha = (
         beta
@@ -243,6 +259,10 @@ def uiq(
         # if the window does not meet our desired window size, ignore it
         if window_org.shape[0] != window_size or window_org.shape[1] != window_size:
             continue
+        
+        # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+        if org_img.ndim == 2:
+            org_img = np.expand_dims(org_img, axis=-1)
 
         for i in range(org_img.shape[2]):
             org_band = window_org[:, :, i]
@@ -299,6 +319,10 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
     _assert_image_shapes_equal(org_img, pred_img, "SRE")
 
     org_img = org_img.astype(np.float32)
+    
+    # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
+    if org_img.ndim == 2:
+        org_img = np.expand_dims(org_img, axis=-1)
 
     sre_final = []
     for i in range(org_img.shape[2]):
