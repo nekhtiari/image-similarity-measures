@@ -38,12 +38,8 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
     
-    rmse_bands = []
-    for i in range(org_img.shape[2]):
-        dif = np.subtract(org_img[:, :, i], pred_img[:, :, i])
-        m = np.mean(np.square(dif / max_p))
-        s = np.sqrt(m)
-        rmse_bands.append(s)
+    mse_bands = np.mean(np.square(org_img - pred_img), axis=(0, 1))
+    rmse_bands = np.sqrt(mse_bands / max_p)
 
     return np.mean(rmse_bands)
 
@@ -65,12 +61,11 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
-        
-    mse_bands = []
-    for i in range(org_img.shape[2]):
-        mse_bands.append(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
 
-    return 20 * np.log10(max_p) - 10.0 * np.log10(np.mean(mse_bands))
+    mse_bands = np.mean(np.square(org_img - pred_img), axis=(0, 1))
+    psnr_bands = 20 * np.log10(max_p) - 10.0 * np.log10(mse_bands)
+
+    return np.mean(psnr_bands)
 
 
 def _similarity_measure(x: np.array, y: np.array, constant: float):
@@ -237,11 +232,10 @@ def sliding_window(image: np.ndarray, stepSize: int, windowSize: int):
 
 def uiq(
     org_img: np.ndarray, pred_img: np.ndarray, step_size: int = 1, window_size: int = 8
-):
+) -> float:
     """
     Universal Image Quality index
     """
-    # TODO: Apply optimization, right now it is very slow
     _assert_image_shapes_equal(org_img, pred_img, "UIQ")
 
     org_img = org_img.astype(np.float32)
@@ -264,27 +258,25 @@ def uiq(
         if org_img.ndim == 2:
             org_img = np.expand_dims(org_img, axis=-1)
 
-        for i in range(org_img.shape[2]):
-            org_band = window_org[:, :, i]
-            pred_band = window_pred[:, :, i]
-            org_band_mean = np.mean(org_band)
-            pred_band_mean = np.mean(pred_band)
-            org_band_variance = np.var(org_band)
-            pred_band_variance = np.var(pred_band)
-            org_pred_band_variance = np.mean(
-                (org_band - org_band_mean) * (pred_band - pred_band_mean)
-            )
+        org_band = window_org.transpose(2, 0, 1).reshape(-1, window_size ** 2)
+        pred_band = window_pred.transpose(2, 0, 1).reshape(-1, window_size ** 2)
+        org_band_mean = np.mean(org_band, axis=1, keepdims=True)
+        pred_band_mean = np.mean(pred_band, axis=1, keepdims=True)
+        org_band_variance = np.var(org_band, axis=1, keepdims=True)
+        pred_band_variance = np.var(pred_band, axis=1, keepdims=True)
+        org_pred_band_variance = np.mean(
+            (org_band - org_band_mean) * (pred_band - pred_band_mean), axis=1, keepdims=True
+        )
 
-            numerator = 4 * org_pred_band_variance * org_band_mean * pred_band_mean
-            denominator = (org_band_variance + pred_band_variance) * (
-                org_band_mean**2 + pred_band_mean**2
-            )
+        numerator = 4 * org_pred_band_variance * org_band_mean * pred_band_mean
+        denominator = (org_band_variance + pred_band_variance) * (
+            org_band_mean**2 + pred_band_mean**2
+        )
 
-            if denominator != 0.0:
-                q = numerator / denominator
-                q_all.append(q)
+        q = np.nan_to_num(numerator / denominator)
+        q_all.extend(q.tolist())
 
-    if not np.any(q_all):
+    if not q_all:
         raise ValueError(
             f"Window size ({window_size}) is too big for image with shape "
             f"{org_img.shape[0:2]}, please use a smaller window size."
@@ -293,23 +285,21 @@ def uiq(
     return np.mean(q_all)
 
 
-def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree: bool = True):
+
+def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree: bool = True) -> float:
     """
     Spectral Angle Mapper which defines the spectral similarity between two spectra
     """
     _assert_image_shapes_equal(org_img, pred_img, "SAM")
 
-    # Spectral angles are first computed for each pair of pixels
-    numerator = np.sum(np.multiply(pred_img, org_img), axis=2)
-    denominator = np.linalg.norm(org_img, axis=2) * np.linalg.norm(pred_img, axis=2)
+    numerator = np.sum(np.multiply(pred_img, org_img), axis=-1)
+    denominator = np.linalg.norm(org_img, axis=-1) * np.linalg.norm(pred_img, axis=-1)
     val = np.clip(numerator / denominator, -1, 1)
     sam_angles = np.arccos(val)
     if convert_to_degree:
-        sam_angles = sam_angles * 180.0 / np.pi
+        sam_angles = np.rad2deg(sam_angles)
 
-    # The original paper states that SAM values are expressed as radians, while e.g. Lanares
-    # et al. (2018) use degrees. We therefore made this configurable, with degree the default
-    return np.mean(np.nan_to_num(sam_angles))
+    return np.nan_to_num(np.mean(sam_angles))
 
 
 def sre(org_img: np.ndarray, pred_img: np.ndarray):
