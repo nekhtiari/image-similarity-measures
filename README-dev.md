@@ -8,21 +8,11 @@ Clone the repository and install the library in editable/system-link mode. We re
 ```bash
 git clone https://github.com/up42/image-similarity-measures.git
 cd image-similarity-measures
-pip install -e .
+poetry install
 ```
 
 ## Upload new package version to PyPI
 
 ```bash
-pip install twine
+poetry publish --build --username $PYPI_USERNAME --password $PYPI_PASSWORD
 ```
-
-Install the [twine package](https://pypi.org/project/twine/) and set the `TWINE_USERNAME` and `TWINE_PASSWORD` 
-environment variables with your PyPI credentials.
-
-```bash
-python setup.py sdist bdist_wheel
-twine check dist/*
-twine upload dist/*
-```
-

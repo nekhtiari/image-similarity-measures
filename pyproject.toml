@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "image-similarity-measures"
+version = "0.3.5"
+description = "Evaluation metrics to assess the similarity between two images."
+authors = ["UP42 <support@up42.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "image_similarity_measures"}]
+classifiers=[
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Development Status :: 5 - Production/Stable",
+]
+
+[project.urls]
+Source = 'https://github.com/up42/image-similarity-measures'
+
+[tool.poetry.dependencies]
+python = ">=3.8"
+numpy = "^1.24.2"
+scikit-image = "^0.20.0"
+opencv-python = "^4.7.0.72"
+phasepack = "^1.5"
+
+[tool.poetry.extras]
+rasterio = ["rasterio"]
+speedups = ["pyfftw"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
