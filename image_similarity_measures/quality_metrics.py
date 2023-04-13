@@ -72,10 +72,10 @@ def _similarity_measure(x: np.array, y: np.array, constant: float):
     """
     Calculate feature similarity measurement between two images
     """
-    numerator = 2 * x * y + constant
-    denominator = x**2 + y**2 + constant
+    numerator = 2 * np.multiply(x, y) + constant
+    denominator = np.add(np.square(x), np.square(y)) + constant
 
-    return numerator / denominator
+    return np.divide(numerator, denominator)
 
 
 def _gradient_magnitude(img: np.ndarray, img_depth: int):
