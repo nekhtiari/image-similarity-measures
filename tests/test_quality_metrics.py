@@ -18,7 +18,7 @@ def test_issm(test_array1, test_array2):
 
 def test_psnr(test_array1, test_array2):
     psnr = quality_metrics.psnr(test_array1, test_array2)
-    assert float(psnr) == 23.879423176555207
+    assert float(psnr) == 23.879422595287842
 
 
 def test_sam(test_array1, test_array2):

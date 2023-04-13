@@ -39,12 +39,9 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
         org_img = np.expand_dims(org_img, axis=-1)
     
     rmse_bands = []
-    for i in range(org_img.shape[2]):
-        dif = np.subtract(org_img[:, :, i], pred_img[:, :, i])
-        m = np.mean(np.square(dif / max_p))
-        s = np.sqrt(m)
-        rmse_bands.append(s)
-
+    diff = org_img - pred_img
+    mse_bands = np.mean(np.square(diff / max_p), axis=(0, 1))
+    rmse_bands = np.sqrt(mse_bands)
     return np.mean(rmse_bands)
 
 
@@ -66,11 +63,9 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
         
-    mse_bands = []
-    for i in range(org_img.shape[2]):
-        mse_bands.append(np.mean(np.square(org_img[:, :, i] - pred_img[:, :, i])))
-
-    return 20 * np.log10(max_p) - 10.0 * np.log10(np.mean(mse_bands))
+    mse_bands = np.mean(np.square(org_img - pred_img), axis=(0, 1))
+    mse = np.mean(mse_bands)
+    return 20 * np.log10(max_p / np.sqrt(mse))
 
 
 def _similarity_measure(x: np.array, y: np.array, constant: float):
