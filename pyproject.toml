@@ -13,6 +13,9 @@ classifiers=[
     "Intended Audience :: Science/Research",
     "Development Status :: 5 - Production/Stable",
 ]
+[tool.poetry.group.test.dependencies]
+pytest = "^7.3.0"
+
 
 [project.urls]
 Source = 'https://github.com/up42/image-similarity-measures'
