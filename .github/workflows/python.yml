@@ -25,6 +25,8 @@ jobs:
     - name: Upgrade Python bits
       run: |
         python -m pip install --upgrade pip coverage wheel setuptools
+    - name: Install Poetry
+      run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
     - name: Install development files
       if: matrix.python-version == '3.9'
       run: |
@@ -34,8 +36,8 @@ jobs:
       run: python -m pip install -e ."$EXTRAS"
       env:
         EXTRAS: '${{ matrix.extras }}'
-    - name: Run app with coverage
-      run: coverage run -m image_similarity_measures.evaluate --metric all --org_img_path=example/lafayette_org.tif --pred_img_path=example/lafayette_pred.tif
+    - name: Run tests with coverage
+      run: coverage run --source=image_similarity_metrics -m pytest -v tests && coverage report -m
     - name: Report coverage
       continue-on-error: true
       run: coverage report
