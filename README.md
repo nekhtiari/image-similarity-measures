@@ -13,7 +13,7 @@ Python package and commandline tool to evaluate the similarity between two image
 
 ## Installation
 
-Supports Python >=3.6.
+Supports Python >=3.8.
 
 ```bash
 pip install image-similarity-measures

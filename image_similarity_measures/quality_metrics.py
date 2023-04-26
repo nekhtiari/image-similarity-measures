@@ -38,9 +38,10 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
     
-    mse_bands = np.mean(np.square(org_img - pred_img), axis=(0, 1))
-    rmse_bands = np.sqrt(mse_bands / max_p)
-
+    rmse_bands = []
+    diff = org_img - pred_img
+    mse_bands = np.mean(np.square(diff / max_p), axis=(0, 1))
+    rmse_bands = np.sqrt(mse_bands)
     return np.mean(rmse_bands)
 
 
@@ -61,21 +62,20 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
-
+        
     mse_bands = np.mean(np.square(org_img - pred_img), axis=(0, 1))
-    psnr_bands = 20 * np.log10(max_p) - 10.0 * np.log10(mse_bands)
-
-    return np.mean(psnr_bands)
+    mse = np.mean(mse_bands)
+    return 20 * np.log10(max_p / np.sqrt(mse))
 
 
 def _similarity_measure(x: np.array, y: np.array, constant: float):
     """
     Calculate feature similarity measurement between two images
     """
-    numerator = 2 * x * y + constant
-    denominator = x**2 + y**2 + constant
+    numerator = 2 * np.multiply(x, y) + constant
+    denominator = np.add(np.square(x), np.square(y)) + constant
 
-    return numerator / denominator
+    return np.divide(numerator, denominator)
 
 
 def _gradient_magnitude(img: np.ndarray, img_depth: int):
