@@ -35,3 +35,6 @@ speedups = ["pyfftw"]
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+image-similarity-measures = "image_similarity_measures.evaluate:main"
