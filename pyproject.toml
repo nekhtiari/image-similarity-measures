@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "image-similarity-measures"
-version = "0.3.6"
+version = "0.3.7"
 description = "Evaluation metrics to assess the similarity between two images."
 authors = ["UP42 <support@up42.com>"]
 license = "MIT"
