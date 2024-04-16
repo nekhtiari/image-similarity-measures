@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "image-similarity-measures"
+  title: Image Similarity Measures
+  namespace: up42
+  annotations:
+    github.com/project-slug: "up42/image-similarity-measures"
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-label-selector: "app=image-similarity-measures"
+spec:
+  type: service
+  owner: group:up42/processing-platform-team
+  lifecycle: production
+  system: up42/processing-platform
+  

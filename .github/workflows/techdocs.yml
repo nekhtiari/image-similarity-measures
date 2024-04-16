@@ -1,0 +1,46 @@
+name: Publish TechDocs Site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "mkdocs.yml"
+
+jobs:
+  publish-techdocs-site:
+    runs-on: ubuntu-latest
+
+    env:
+      TECHDOCS_GCS_BUCKET_NAME: "up42-backstage-techdocs"
+      SA_KEY: ${{ secrets.BACKSTAGE_TECHDOCS_PUBLISHER_SA_KEY }}
+
+      ENTITY_KIND: 'Component'
+      ENTITY_NAMESPACE: 'up42'
+      ENTITY_NAME: 'image-similarity-measures'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install techdocs-cli
+        run: sudo npm install -g @techdocs/cli
+
+      - name: Install mkdocs and mkdocs plugins
+        run: python -m pip install mkdocs-techdocs-core==1.*
+
+      - name: Generate docs site
+        run: techdocs-cli generate --no-docker --verbose
+
+      - name: Publish docs site
+        run: |
+          echo ${SA_KEY} > $(pwd)/credentials.json
+          GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/credentials.json techdocs-cli publish \
+            --publisher-type googleGcs \
+            --storage-name $TECHDOCS_GCS_BUCKET_NAME \
+            --entity $ENTITY_NAMESPACE/$ENTITY_KIND/$ENTITY_NAME
