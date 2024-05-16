@@ -6,10 +6,8 @@ metadata:
   namespace: up42
   annotations:
     github.com/project-slug: "up42/image-similarity-measures"
-    backstage.io/techdocs-ref: dir:.
-    backstage.io/kubernetes-label-selector: "app=image-similarity-measures"
 spec:
-  type: service
+  type: library
   owner: group:up42/processing-platform-team
   lifecycle: production
   system: up42/processing-platform
