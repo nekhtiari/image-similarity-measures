@@ -9,6 +9,3 @@ metadata:
 spec:
   type: library
   owner: group:up42/processing-platform-team
-  lifecycle: production
-  system: up42/processing-platform
-  
