@@ -17,10 +17,6 @@ classifiers=[
 pytest = "^7.3.0"
 rasterio = "^1.3.6"
 
-
-[project.urls]
-Source = 'https://github.com/up42/image-similarity-measures'
-
 [tool.poetry.dependencies]
 python = ">=3.9, <3.13"
 numpy = "^1.24.2"
