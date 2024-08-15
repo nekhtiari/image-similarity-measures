@@ -6,7 +6,7 @@ fix a bug.
 Clone the repository and install the library in editable/system-link mode. We recommend using a virtual environment.
 
 ```bash
-git clone https://github.com/up42/image-similarity-measures.git
+git clone https://github.com/nekhtiari/image-similarity-measures.git
 cd image-similarity-measures
 poetry install
 ```
