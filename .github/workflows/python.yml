@@ -1,5 +1,4 @@
 name: Python
-
 on:
   push:
     branches: [ master ]
@@ -11,31 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
         extras:
           - ''
-          - '[speedups]'
-          - '[speedups,rasterio]'
+          - '--extra speedups'
+          - '--extra speedups --extra rasterio'
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Upgrade Python bits
-      run: |
-        python -m pip install --upgrade pip coverage wheel setuptools
-    - name: Install development files
-      if: matrix.python-version == '3.9'
-      run: |
-        sudo apt-get install -y fftw3-dev
-        python -m pip install Cython
-    - name: Install app
-      run: python -m pip install -e ."$EXTRAS"
-      env:
-        EXTRAS: '${{ matrix.extras }}'
-    - name: Run app with coverage
-      run: coverage run -m image_similarity_measures.evaluate --metric all --org_img_path=example/lafayette_org.tif --pred_img_path=example/lafayette_pred.tif
-    - name: Report coverage
-      continue-on-error: true
-      run: coverage report
+      - uses: actions/checkout@v4
+      - name: Install fftw (for pyfftw)
+        if: contains(matrix.extras, 'speedups')
+        run: sudo apt-get install -y fftw3-dev
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Sync deps
+        run: uv sync --group test ${{ matrix.extras }}
+      - name: Run pytest
+        run: uv run pytest
+      - name: Smoke-test CLI (all metrics)
+        run: uv run image-similarity-measures --metric all --org_img_path=example/lafayette_org.tif --pred_img_path=example/lafayette_pred.tif
