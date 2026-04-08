@@ -30,7 +30,9 @@ def test_sam(test_array1, test_array2):
 
 def test_sre(test_array1, test_array2):
     sre = quality_metrics.sre(test_array1, test_array2)
-    assert_almost_equal(sre, 65.2174177232156)
+    # sre() casts inputs to float32; numpy 2 preserves float32 dtype through
+    # linalg.norm, so the result has ~7 significant figures of precision only.
+    assert_almost_equal(sre, 65.2174177232156, decimal=5)
 
 
 def test_ssim(test_array1, test_array2):
