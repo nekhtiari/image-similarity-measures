@@ -166,7 +166,13 @@ def _ehs(x: np.ndarray, y: np.ndarray):
     """
     Entropy-Histogram Similarity measure
     """
-    H = (np.histogram2d(x.flatten(), y.flatten()))[0]
+    total_pixels = x.size
+
+    # Original paper operates with entropy specified for images with value range from 0 to 255
+    # bins must be set accordingly
+    value_bins = list(range(256))
+
+    H = (np.histogram2d(x.flatten(), y.flatten(), bins=[value_bins, value_bins]))[0] / total_pixels
 
     return -np.sum(np.nan_to_num(H * np.log2(H)))
 
@@ -203,12 +209,13 @@ def issm(org_img: np.ndarray, pred_img: np.ndarray) -> float:
     A = 0.3
     B = 0.5
     C = 0.7
+    e = 0.01
 
     ehs_val = _ehs(x, y)
     canny_val = _edge_c(x, y)
 
-    numerator = canny_val * ehs_val * (A + B) + math.e
-    denominator = A * canny_val * ehs_val + B * ehs_val + C * ssim(x, y) + math.e
+    numerator = canny_val * ehs_val * (A + B) + e
+    denominator = A * canny_val * ehs_val + B * ehs_val + C * ssim(x, y) + e
 
     return np.nan_to_num(numerator / denominator)
 
