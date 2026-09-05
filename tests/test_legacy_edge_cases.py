@@ -6,9 +6,7 @@ from image_similarity_measures import quality_metrics
 
 @pytest.fixture
 def sample_images():
-    original = (np.arange(16 * 16 * 3).reshape(16, 16, 3) % 256).astype(
-        np.uint8
-    )
+    original = (np.arange(16 * 16 * 3).reshape(16, 16, 3) % 256).astype(np.uint8)
     predicted = original.copy()
     predicted[2:9, 4:12, :] = np.clip(
         predicted[2:9, 4:12, :].astype(np.uint16) + 17, 0, 255
@@ -37,9 +35,7 @@ def test_2d_grayscale_has_known_legacy_failures(sample_images):
     with np.errstate(all="ignore"):
         for name, error in expected_errors.items():
             with pytest.raises(error):
-                quality_metrics.metric_functions[name](
-                    gray_original, gray_predicted
-                )
+                quality_metrics.metric_functions[name](gray_original, gray_predicted)
 
 
 def test_2d_grayscale_rmse_preserves_legacy_broadcasting(sample_images):

@@ -2,7 +2,6 @@ import inspect
 
 from image_similarity_measures import evaluate, quality_metrics
 
-
 EXPECTED_METRIC_SIGNATURES = {
     "fsim": "(org_img: numpy.ndarray, pred_img: numpy.ndarray, T1: float = 0.85, T2: float = 160) -> float",
     "issm": "(org_img: numpy.ndarray, pred_img: numpy.ndarray) -> float",

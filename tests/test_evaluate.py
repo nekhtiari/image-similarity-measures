@@ -35,9 +35,7 @@ def test_read_image_uses_rasterio_for_lowercase_tiff(monkeypatch):
         def read(self):
             return band_first
 
-    fake_rasterio = SimpleNamespace(
-        open=lambda path: opened.append(path) or Dataset()
-    )
+    fake_rasterio = SimpleNamespace(open=lambda path: opened.append(path) or Dataset())
     monkeypatch.setattr(evaluate, "rasterio", fake_rasterio)
     monkeypatch.setattr(
         evaluate.cv2,
@@ -71,9 +69,7 @@ def test_read_image_preserves_case_sensitive_legacy_selection(monkeypatch):
     monkeypatch.setattr(
         evaluate,
         "rasterio",
-        SimpleNamespace(
-            open=lambda path: (_ for _ in ()).throw(AssertionError(path))
-        ),
+        SimpleNamespace(open=lambda path: (_ for _ in ()).throw(AssertionError(path))),
     )
     monkeypatch.setattr(
         evaluate.cv2,

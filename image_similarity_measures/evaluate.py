@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def read_image(path: str):
     logger.info(f"Reading image {os.path.basename(path)}")
-    if rasterio and (path.endswith(".tif") or path.endswith(".tiff")):
+    if rasterio and path.endswith((".tif", ".tiff")):
         return np.rollaxis(rasterio.open(path).read(), 0, 3)
     return cv2.imread(path)
 
@@ -59,7 +59,7 @@ def main():
         "--metric",
         dest="metrics",
         action="append",
-        choices=all_metrics + ["all"],
+        choices=[*all_metrics, "all"],
         metavar="METRIC",
         help="select an evaluation metric (%(choices)s) (can be repeated)",
     )
