@@ -1,3 +1,6 @@
+import subprocess
+import sys
+
 import numpy as np
 import pytest
 
@@ -18,6 +21,22 @@ def test_shape_mismatch_raises_legacy_assertion_error(sample_images):
     original, predicted = sample_images
     with pytest.raises(AssertionError, match="Input shapes not identical"):
         quality_metrics.rmse(original, predicted[:, :, :2])
+
+
+def test_shape_validation_remains_active_with_python_optimization():
+    code = """
+import numpy as np
+from image_similarity_measures.quality_metrics import rmse
+
+try:
+    rmse(np.zeros((2, 2, 1)), np.zeros((2, 2, 2)))
+except AssertionError:
+    pass
+else:
+    raise SystemExit("shape validation was optimized away")
+"""
+
+    subprocess.run([sys.executable, "-O", "-c", code], check=True)
 
 
 def test_2d_grayscale_has_known_legacy_failures(sample_images):

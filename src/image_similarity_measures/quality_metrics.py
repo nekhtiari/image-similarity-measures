@@ -21,7 +21,8 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
         f"{org_img.shape!s}, y_pred shape = {pred_img.shape!s}"
     )
 
-    assert org_img.shape == pred_img.shape, msg
+    if org_img.shape != pred_img.shape:
+        raise AssertionError(msg)
 
 
 def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:

@@ -49,7 +49,7 @@ The following behaviors are retained in 0.4 and covered by characterization test
 - SAM can overflow when multiplying integer arrays;
 - some metrics produce `NaN`, infinity, or unintuitive values for constant or identical inputs;
 - ISSM has unresolved formula and stability questions;
-- shape validation currently raises `AssertionError` and can be disabled by optimized Python;
+- shape validation retains the legacy `AssertionError` contract and remains active under optimized Python;
 - RMSE, PSNR, and SSIM default to the original 12-bit `max_p=4095` convention;
 - TIFF loader selection depends on the installed optional dependencies and a case-sensitive suffix.
 
