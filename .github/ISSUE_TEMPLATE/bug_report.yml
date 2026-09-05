@@ -1,0 +1,64 @@
+name: Bug report
+description: Report an installation, API, CLI, or numerical problem.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve image-similarity-measures.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Package version
+      placeholder: "0.3.6"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Python, operating system, NumPy, OpenCV, scikit-image, and optional extras.
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: input-kind
+    attributes:
+      label: Input type
+      options:
+        - NumPy arrays
+        - TIFF files with Rasterio
+        - Files with OpenCV
+        - CLI
+        - Installation or packaging
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide the smallest runnable example and input shape/dtype/data range.
+      render: python
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output or traceback
+      render: text
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I removed private or sensitive image data from this report.
+          required: true
+        - label: I searched existing issues for duplicates.
+          required: true

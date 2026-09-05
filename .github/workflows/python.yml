@@ -1,32 +1,127 @@
-name: Python
+name: CI
+
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_FROZEN: "1"
+  UV_NO_PROGRESS: "1"
 
 jobs:
-  test:
+  quality:
+    name: Quality and artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      - name: Install development environment
+        run: uv sync --all-extras --group dev
+      - name: Lint
+        run: uv run ruff check .
+      - name: Check formatting
+        run: uv run ruff format --check .
+      - name: Test with coverage
+        run: uv run pytest
+      - name: Build distributions
+        run: uv build
+      - name: Validate distribution metadata
+        run: uv run twine check --strict dist/*
+      - name: Validate wheel contents
+        run: uv run check-wheel-contents dist/*.whl
+      - name: Install wheel with optional dependencies
+        shell: bash
+        run: |
+          uv venv --python 3.14 .venv-artifact
+          wheel_path="$(find dist -maxdepth 1 -name '*.whl' -print -quit)"
+          uv pip install --python .venv-artifact/bin/python "${wheel_path}[rasterio,speedups]"
+          cd "$(mktemp -d)"
+          "${GITHUB_WORKSPACE}/.venv-artifact/bin/image-similarity-measures" \
+            --metric rmse \
+            --org_img_path="${GITHUB_WORKSPACE}/example/lafayette_org.tif" \
+            --pred_img_path="${GITHUB_WORKSPACE}/example/lafayette_pred.tif"
+      - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5
+        with:
+          name: distributions
+          path: dist/
+          if-no-files-found: error
+
+  python:
+    name: Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
-        extras:
-          - ''
-          - '--extra speedups'
-          - '--extra speedups --extra rasterio'
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     steps:
-      - uses: actions/checkout@v4
-      - name: Install fftw (for pyfftw)
-        if: contains(matrix.extras, 'speedups')
-        run: sudo apt-get install -y libfftw3-dev
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Sync deps
-        run: uv sync --group test ${{ matrix.extras }}
-      - name: Run pytest
+          enable-cache: true
+      - name: Install test environment
+        run: uv sync --all-extras --group test
+      - name: Run tests
         run: uv run pytest
-      - name: Smoke-test CLI (all metrics)
-        run: uv run image-similarity-measures --metric all --org_img_path=example/lafayette_org.tif --pred_img_path=example/lafayette_pred.tif
+
+  platform:
+    name: ${{ matrix.os }} / Python 3.14
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          python-version: "3.14"
+          enable-cache: true
+      - name: Install test environment
+        run: uv sync --all-extras --group test
+      - name: Run tests
+        run: uv run pytest
+
+  minimum-dependencies:
+    name: Minimum direct dependencies / Python 3.10
+    runs-on: ubuntu-latest
+    env:
+      UV_FROZEN: "0"
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          python-version: "3.10"
+          enable-cache: true
+      - name: Install minimum direct dependencies
+        run: |
+          uv venv --python 3.10 .venv-minimum
+          uv pip install \
+            --python .venv-minimum/bin/python \
+            --resolution lowest-direct \
+            ".[rasterio,speedups]" \
+            "pytest>=8,<10" \
+            "pytest-cov>=6,<8"
+      - name: Run tests
+        run: .venv-minimum/bin/python -m pytest
