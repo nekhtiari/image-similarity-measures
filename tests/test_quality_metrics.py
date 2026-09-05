@@ -1,5 +1,6 @@
 import numpy as np
 from numpy.testing import assert_almost_equal
+
 from image_similarity_measures import quality_metrics
 
 
@@ -14,7 +15,8 @@ def test_fsim(test_array1, test_array2):
 
 
 def test_issm(test_array1, test_array2):
-    issm = quality_metrics.issm(test_array1, test_array2)
+    with np.errstate(all="ignore"):
+        issm = quality_metrics.issm(test_array1, test_array2)
     assert_almost_equal(issm, 0.133647886351807)
 
 
@@ -52,7 +54,8 @@ def test_similarity_measure(test_array1, test_array2):
 
 
 def test_gradient_magnitude(test_array1):
-    gm = quality_metrics._gradient_magnitude(test_array1, img_depth=3)
+    with np.errstate(all="ignore"):
+        gm = quality_metrics._gradient_magnitude(test_array1, img_depth=3)
     assert gm.shape == (200, 200, 4)
     np.testing.assert_array_equal(
         gm[0:3, 0, 0], np.array([0, 8.246211, 48.166378], dtype=np.float32)

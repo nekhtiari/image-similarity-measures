@@ -5,10 +5,10 @@ Currently implemented metrics are FSIM, ISSM, PSNR, RMSE, SAM, SRE, SSIM, UIQ.
 
 import math
 
-import numpy as np
-from skimage.metrics import structural_similarity
-import phasepack.phasecong as pc
 import cv2
+import numpy as np
+import phasepack.phasecong as pc
+from skimage.metrics import structural_similarity
 
 
 def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric: str):
@@ -18,10 +18,11 @@ def _assert_image_shapes_equal(org_img: np.ndarray, pred_img: np.ndarray, metric
     # in order efficiently swap the axis order one can use reshape_as_raster, reshape_as_image from rasterio.plot
     msg = (
         f"Cannot calculate {metric}. Input shapes not identical. y_true shape ="
-        f"{str(org_img.shape)}, y_pred shape = {str(pred_img.shape)}"
+        f"{org_img.shape!s}, y_pred shape = {pred_img.shape!s}"
     )
 
-    assert org_img.shape == pred_img.shape, msg
+    if org_img.shape != pred_img.shape:
+        raise AssertionError(msg)
 
 
 def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
@@ -33,11 +34,11 @@ def rmse(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     _assert_image_shapes_equal(org_img, pred_img, "RMSE")
 
     org_img = org_img.astype(np.float32)
-    
+
     # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
-    
+
     rmse_bands = []
     diff = org_img - pred_img
     mse_bands = np.mean(np.square(diff / max_p), axis=(0, 1))
@@ -58,11 +59,11 @@ def psnr(org_img: np.ndarray, pred_img: np.ndarray, max_p: int = 4095) -> float:
     _assert_image_shapes_equal(org_img, pred_img, "PSNR")
 
     org_img = org_img.astype(np.float32)
-    
+
     # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
-        
+
     mse_bands = np.mean(np.square(org_img - pred_img), axis=(0, 1))
     mse = np.mean(mse_bands)
     return 20 * np.log10(max_p / np.sqrt(mse))
@@ -115,14 +116,14 @@ def fsim(
         T2 -- constant based on the dynamic range of GM values
     """
     _assert_image_shapes_equal(org_img, pred_img, "FSIM")
-    
+
     # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)
 
-    alpha = (
-        beta
-    ) = 1  # parameters used to adjust the relative importance of PC and GM features
+    alpha = beta = (
+        1  # parameters used to adjust the relative importance of PC and GM features
+    )
     fsim_list = []
     for i in range(org_img.shape[2]):
         # Calculate the PC for original and predicted images
@@ -242,30 +243,33 @@ def uiq(
     pred_img = pred_img.astype(np.float32)
 
     q_all = []
-    for (x, y, window_org), (x, y, window_pred) in zip(
+    for (_, _, window_org), (_, _, window_pred) in zip(
         sliding_window(
             org_img, stepSize=step_size, windowSize=(window_size, window_size)
         ),
         sliding_window(
             pred_img, stepSize=step_size, windowSize=(window_size, window_size)
         ),
+        strict=True,
     ):
         # if the window does not meet our desired window size, ignore it
         if window_org.shape[0] != window_size or window_org.shape[1] != window_size:
             continue
-        
+
         # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
         if org_img.ndim == 2:
             org_img = np.expand_dims(org_img, axis=-1)
 
-        org_band = window_org.transpose(2, 0, 1).reshape(-1, window_size ** 2)
-        pred_band = window_pred.transpose(2, 0, 1).reshape(-1, window_size ** 2)
+        org_band = window_org.transpose(2, 0, 1).reshape(-1, window_size**2)
+        pred_band = window_pred.transpose(2, 0, 1).reshape(-1, window_size**2)
         org_band_mean = np.mean(org_band, axis=1, keepdims=True)
         pred_band_mean = np.mean(pred_band, axis=1, keepdims=True)
         org_band_variance = np.var(org_band, axis=1, keepdims=True)
         pred_band_variance = np.var(pred_band, axis=1, keepdims=True)
         org_pred_band_variance = np.mean(
-            (org_band - org_band_mean) * (pred_band - pred_band_mean), axis=1, keepdims=True
+            (org_band - org_band_mean) * (pred_band - pred_band_mean),
+            axis=1,
+            keepdims=True,
         )
 
         numerator = 4 * org_pred_band_variance * org_band_mean * pred_band_mean
@@ -285,8 +289,9 @@ def uiq(
     return np.mean(q_all)
 
 
-
-def sam(org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree: bool = True) -> float:
+def sam(
+    org_img: np.ndarray, pred_img: np.ndarray, convert_to_degree: bool = True
+) -> float:
     """
     Spectral Angle Mapper which defines the spectral similarity between two spectra
     """
@@ -309,7 +314,7 @@ def sre(org_img: np.ndarray, pred_img: np.ndarray):
     _assert_image_shapes_equal(org_img, pred_img, "SRE")
 
     org_img = org_img.astype(np.float32)
-    
+
     # if image is a gray image - add empty 3rd dimension for the .shape[2] to exist
     if org_img.ndim == 2:
         org_img = np.expand_dims(org_img, axis=-1)

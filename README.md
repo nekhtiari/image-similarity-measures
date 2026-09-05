@@ -1,80 +1,127 @@
 # Image Similarity Measures
 
-Python package and commandline tool to evaluate the similarity between two images with eight evaluation metrics:
+[![CI](https://github.com/nekhtiari/image-similarity-measures/actions/workflows/python.yml/badge.svg)](https://github.com/nekhtiari/image-similarity-measures/actions/workflows/python.yml)
+[![PyPI](https://img.shields.io/pypi/v/image-similarity-measures)](https://pypi.org/project/image-similarity-measures/)
+[![Python](https://img.shields.io/pypi/pyversions/image-similarity-measures)](https://pypi.org/project/image-similarity-measures/)
 
- * <i><a href="https://en.wikipedia.org/wiki/Root-mean-square_deviation">Root mean square error (RMSE)</a></i>
- * <i><a href="https://en.wikipedia.org/wiki/Peak_signal-to-noise_ratio">Peak signal-to-noise ratio (PSNR)</a></i>
- * <i><a href="https://en.wikipedia.org/wiki/Structural_similarity">Structural Similarity Index (SSIM)</a></i>
- * <i><a href="https://www4.comp.polyu.edu.hk/~cslzhang/IQA/TIP_IQA_FSIM.pdf">Feature-based similarity index (FSIM)</a></i>
- * <i><a href="https://www.tandfonline.com/doi/full/10.1080/22797254.2019.1628617">Information theoretic-based Statistic Similarity Measure (ISSM)</a></i>
- * <i><a href="https://www.sciencedirect.com/science/article/abs/pii/S0924271618302636">Signal to reconstruction error ratio (SRE)</a></i>
- * <i><a href="https://ntrs.nasa.gov/citations/19940012238">Spectral angle mapper (SAM)</a></i>
- * <i><a href="https://ece.uwaterloo.ca/~z70wang/publications/quality_2c.pdf">Universal image quality index (UIQ)</a></i>
+A Python library and command-line tool for comparing images with eight full-reference image-quality metrics:
+
+- Feature Similarity Index (FSIM)
+- Information theoretic-based Statistic Similarity Measure (ISSM)
+- Peak Signal-to-Noise Ratio (PSNR)
+- Root Mean Square Error (RMSE)
+- Spectral Angle Mapper (SAM)
+- Signal-to-Reconstruction Error ratio (SRE)
+- Structural Similarity Index (SSIM)
+- Universal Image Quality Index (UIQ)
+
+The library was created for multi-band remote-sensing imagery. Arrays are expected in channel-last order: `(rows, columns, bands)`.
 
 ## Installation
 
-Supports Python >=3.10.
+Image Similarity Measures supports Python 3.10 and newer.
 
-```bash
-pip install image-similarity-measures
+```console
+python -m pip install image-similarity-measures
 ```
 
-*Optional*: For faster evaluation of the FSIM metric, the `pyfftw` package is required, install via:
+Optional dependencies are available for geospatial TIFF loading and faster FSIM evaluation:
 
-```bash
-pip install image-similarity-measures[speedups]
+```console
+python -m pip install "image-similarity-measures[rasterio]"
+python -m pip install "image-similarity-measures[speedups]"
+python -m pip install "image-similarity-measures[rasterio,speedups]"
 ```
 
-*Optional*: For reading TIFF images with `rasterio` instead of `OpenCV`, install:
+## Command-line usage
 
-```bash
-pip install image-similarity-measures[rasterio]
+Evaluate every metric:
+
+```console
+image-similarity-measures \
+  --org_img_path=original.tif \
+  --pred_img_path=prediction.tif
 ```
 
+Select one or more metrics by repeating `--metric`:
 
-## Usage on commandline
-
-To evaluate the similarity beteween two images, run on the commandline:
-
-```bash
-image-similarity-measures --org_img_path=a.tif --pred_img_path=b.tif
+```console
+image-similarity-measures \
+  --org_img_path=original.tif \
+  --pred_img_path=prediction.tif \
+  --metric=rmse \
+  --metric=psnr
 ```
 
-**Note** that images that are used for evaluation should be **channel last**. The results are printed in 
-machine-readable JSON, so you can redirect the output of the command into a file.
+Choose a deterministic image loader with `--loader=opencv` or `--loader=rasterio`. The default is `--loader=auto` for compatibility with earlier releases.
 
-#### Parameters
-```
-  --org_img_path FILE   Path to original input image
-  --pred_img_path FILE  Path to predicted image
-  --metric METRIC       select an evaluation metric (fsim, issm, psnr, rmse,
-                        sam, sre, ssim, uiq, all) (can be repeated)
-```
+The command prints machine-readable JSON to standard output.
 
-## Usage in Python
+## Python usage
 
-```bash
+Evaluate files:
+
+```python
 from image_similarity_measures.evaluate import evaluation
 
-evaluation(org_img_path="example/lafayette_org.tif", 
-           pred_img_path="example/lafayette_pred.tif", 
-           metrics=["rmse", "psnr"])
+results = evaluation(
+    org_img_path="original.tif",
+    pred_img_path="prediction.tif",
+    metrics=["rmse", "psnr"],
+)
 ```
 
-```bash
+Or call an individual metric with NumPy arrays:
+
+```python
+import numpy as np
+
 from image_similarity_measures.quality_metrics import rmse
 
-rmse(org_img=np.random.rand(3,2,1), pred_img=np.random.rand(3,2,1))
+original = np.random.default_rng(0).random((32, 32, 3))
+prediction = np.random.default_rng(1).random((32, 32, 3))
+score = rmse(original, prediction, max_p=1)
 ```
 
-## Contribute
+For deterministic file loading, use the additive API:
 
-Contributions are welcome! Please see README-dev.md for instructions.
+```python
+from image_similarity_measures.evaluate import evaluation_with_loader
 
+results = evaluation_with_loader(
+    org_img_path="original.TIF",
+    pred_img_path="prediction.TIF",
+    metrics=["rmse", "psnr"],
+    loader="rasterio",
+)
+```
+
+`max_p` defaults to `4095` for RMSE, PSNR, and SSIM because the original use case was 12-bit imagery. Pass `255` for 8-bit images or `1` for normalized floating-point images where appropriate.
+
+## Important TIFF loading behavior
+
+For compatibility with existing releases, installing the `rasterio` extra changes how lowercase `.tif` and `.tiff` files are read:
+
+- with Rasterio installed, TIFFs retain their bands and native dtype;
+- otherwise, OpenCV reads them and may change the band count, dtype, or value range;
+- other file types use OpenCV.
+
+Consequently, installing an optional dependency can change metric results for the same TIFF files when using `auto`. Select a loader explicitly and pin dependencies when reproducibility matters. See [COMPATIBILITY.md](COMPATIBILITY.md) for the compatibility policy and documented legacy behavior.
+
+## Contributing and security
+
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing a change, especially a numerical one.
+
+Report security problems using the private process in [SECURITY.md](SECURITY.md). For release history, see [CHANGELOG.md](CHANGELOG.md).
+
+Planned correctness work and additive features are tracked in the [modernization roadmap](docs/roadmap.md).
 
 ## Citation
-Please use the following for citation purposes of this codebase:
 
-<strong>Müller, M. U., Ekhtiari, N., Almeida, R. M., and Rieke, C.: SUPER-RESOLUTION OF MULTISPECTRAL
-SATELLITE IMAGES USING CONVOLUTIONAL NEURAL NETWORKS, ISPRS Ann. Photogramm. Remote Sens.
-Spatial Inf. Sci., V-1-2020, 33–40, https://doi.org/10.5194/isprs-annals-V-1-2020-33-2020, 2020.</strong>
+If this package supports your research, please cite:
+
+> Müller, M. U., Ekhtiari, N., Almeida, R. M., and Rieke, C. (2020). Super-resolution of multispectral satellite images using convolutional neural networks. *ISPRS Annals of the Photogrammetry, Remote Sensing and Spatial Information Sciences*, V-1-2020, 33–40. <https://doi.org/10.5194/isprs-annals-V-1-2020-33-2020>
+
+## License
+
+Image Similarity Measures is distributed under the [MIT License](LICENSE).

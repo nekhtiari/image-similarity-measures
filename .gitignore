@@ -7,5 +7,10 @@ tmp
 *.pyc
 *.ipynb_checkpoints
 *.egg*
+.coverage
+.pytest_cache/
+.ruff_cache/
+.venv/
 build
 dist
+htmlcov/

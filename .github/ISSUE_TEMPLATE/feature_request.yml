@@ -1,0 +1,30 @@
+name: Feature request
+description: Propose a compatible enhancement or a new metric.
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or use case
+      description: Explain the need before describing a solution.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include the intended API and compatibility considerations.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: For a metric or formula change, link the paper and trusted reference implementations.
+  - type: checkboxes
+    id: compatibility
+    attributes:
+      label: Compatibility
+      options:
+        - label: I considered whether this changes existing numerical results or defaults.
+          required: true
