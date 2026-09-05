@@ -114,6 +114,8 @@ Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 Report security problems using the private process in [SECURITY.md](SECURITY.md). For release history, see [CHANGELOG.md](CHANGELOG.md).
 
+Planned correctness work and additive features are tracked in the [modernization roadmap](docs/roadmap.md).
+
 ## Citation
 
 If this package supports your research, please cite:
