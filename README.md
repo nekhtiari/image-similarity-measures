@@ -53,6 +53,8 @@ image-similarity-measures \
   --metric=psnr
 ```
 
+Choose a deterministic image loader with `--loader=opencv` or `--loader=rasterio`. The default is `--loader=auto` for compatibility with earlier releases.
+
 The command prints machine-readable JSON to standard output.
 
 ## Python usage
@@ -81,6 +83,19 @@ prediction = np.random.default_rng(1).random((32, 32, 3))
 score = rmse(original, prediction, max_p=1)
 ```
 
+For deterministic file loading, use the additive API:
+
+```python
+from image_similarity_measures.evaluate import evaluation_with_loader
+
+results = evaluation_with_loader(
+    org_img_path="original.TIF",
+    pred_img_path="prediction.TIF",
+    metrics=["rmse", "psnr"],
+    loader="rasterio",
+)
+```
+
 `max_p` defaults to `4095` for RMSE, PSNR, and SSIM because the original use case was 12-bit imagery. Pass `255` for 8-bit images or `1` for normalized floating-point images where appropriate.
 
 ## Important TIFF loading behavior
@@ -91,7 +106,7 @@ For compatibility with existing releases, installing the `rasterio` extra change
 - otherwise, OpenCV reads them and may change the band count, dtype, or value range;
 - other file types use OpenCV.
 
-Consequently, installing an optional dependency can change metric results for the same TIFF files. Pin your environment and loader dependencies when reproducibility matters. See [COMPATIBILITY.md](COMPATIBILITY.md) for the compatibility policy and documented legacy behavior.
+Consequently, installing an optional dependency can change metric results for the same TIFF files when using `auto`. Select a loader explicitly and pin dependencies when reproducibility matters. See [COMPATIBILITY.md](COMPATIBILITY.md) for the compatibility policy and documented legacy behavior.
 
 ## Contributing and security
 

@@ -13,6 +13,7 @@ All notable changes to this project are documented here. The format is based on 
 - Branch coverage enforcement, Ruff checks, dependency auditing, CodeQL, dependency review, and Dependabot configuration.
 - Correct wheel metadata for the `rasterio` and `speedups` optional dependencies.
 - The documented `image-similarity-measures` console entry point in built distributions.
+- Explicit OpenCV and Rasterio selection through `read_image_with_loader()`, `evaluation_with_loader()`, and the CLI `--loader` option.
 - Contribution, security, compatibility, release, issue, and pull-request guidance.
 
 ### Changed

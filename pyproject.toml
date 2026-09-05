@@ -97,6 +97,6 @@ ignore = ["E501"] # Ruff's formatter intentionally leaves long comments and stri
 
 [tool.ruff.lint.per-file-ignores]
 "src/image_similarity_measures/evaluate.py" = [
-    "UP006", # Preserve the 0.3.6 runtime signature in the compatibility release.
+    "UP006", # Preserve List in the 0.3.6 runtime signature.
     "UP035",
 ]

@@ -53,6 +53,12 @@ jobs:
           cd "$(mktemp -d)"
           "${GITHUB_WORKSPACE}/.venv-artifact/bin/image-similarity-measures" \
             --metric rmse \
+            --loader opencv \
+            --org_img_path="${GITHUB_WORKSPACE}/example/lafayette_org.tif" \
+            --pred_img_path="${GITHUB_WORKSPACE}/example/lafayette_pred.tif"
+          "${GITHUB_WORKSPACE}/.venv-artifact/bin/image-similarity-measures" \
+            --metric rmse \
+            --loader rasterio \
             --org_img_path="${GITHUB_WORKSPACE}/example/lafayette_org.tif" \
             --pred_img_path="${GITHUB_WORKSPACE}/example/lafayette_pred.tif"
       - uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5

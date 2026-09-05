@@ -40,3 +40,13 @@ def test_evaluation_signatures_are_stable():
         "(org_img_path: str, pred_img_path: str, metrics: List[str])"
     )
     assert str(inspect.signature(evaluate.read_image)) == "(path: str)"
+
+
+def test_explicit_loader_api_is_additive():
+    assert str(inspect.signature(evaluate.read_image_with_loader)) == (
+        "(path: str, loader: Literal['auto', 'opencv', 'rasterio'] = 'auto')"
+    )
+    assert str(inspect.signature(evaluate.evaluation_with_loader)) == (
+        "(org_img_path: str, pred_img_path: str, metrics: List[str], "
+        "loader: Literal['auto', 'opencv', 'rasterio'] = 'auto')"
+    )

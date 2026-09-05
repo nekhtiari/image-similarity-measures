@@ -18,6 +18,8 @@ The compatibility suite protects these existing entry points:
 
 - `image_similarity_measures.evaluate.evaluation`
 - `image_similarity_measures.evaluate.read_image`
+- `image_similarity_measures.evaluate.evaluation_with_loader`
+- `image_similarity_measures.evaluate.read_image_with_loader`
 - `image_similarity_measures.quality_metrics.{fsim,issm,psnr,rmse,sam,sre,ssim,uiq}`
 - `image_similarity_measures.quality_metrics.metric_functions`
 - the `image-similarity-measures` command and its JSON result structure
@@ -37,7 +39,7 @@ Version 0.4 is a compatibility and packaging release. It deliberately preserves 
 1. if Rasterio is importable and `path` ends in lowercase `.tif` or `.tiff`, Rasterio is used and its band-first result is converted to channel-last;
 2. otherwise OpenCV is used.
 
-The loaders may return different band counts, dtypes, and value ranges for the same TIFF. Installing the `rasterio` extra can therefore change numerical results. Explicit loader selection is planned as an additive API; the legacy automatic default will remain available.
+The loaders may return different band counts, dtypes, and value ranges for the same TIFF. Installing the `rasterio` extra can therefore change numerical results. Use `read_image_with_loader()` or `evaluation_with_loader()`, or pass `--loader` to the CLI, for explicit selection. The legacy automatic default remains available.
 
 ## Documented legacy limitations
 
