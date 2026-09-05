@@ -18,6 +18,7 @@ All notable changes to this project are documented here. The format is based on 
 ### Changed
 
 - Migrated project and lockfile management from Poetry to uv.
+- Adopted a standard `src/` package layout without changing installed import paths.
 - Updated supported dependency ranges and verified their declared minimum versions.
 - Updated package ownership and project URL metadata following the repository transfer from UP42.
 - Included the full MIT license in built wheels and source distributions.

@@ -66,7 +66,7 @@ build-backend = "uv_build"
 
 [tool.uv.build-backend]
 module-name = "image_similarity_measures"
-module-root = ""
+module-root = "src"
 
 [tool.pytest.ini_options]
 addopts = [
@@ -96,7 +96,7 @@ select = ["B", "E", "F", "I", "PIE", "RUF", "UP"]
 ignore = ["E501"] # Ruff's formatter intentionally leaves long comments and strings.
 
 [tool.ruff.lint.per-file-ignores]
-"image_similarity_measures/evaluate.py" = [
+"src/image_similarity_measures/evaluate.py" = [
     "UP006", # Preserve the 0.3.6 runtime signature in the compatibility release.
     "UP035",
 ]
